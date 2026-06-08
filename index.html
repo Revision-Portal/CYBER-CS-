@@ -1,0 +1,3800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Premium cyberpunk-themed OCR GCSE Computer Science J277 revision portal with flashcards, quizzes, exam practice and more.">
+<title>CYBER//CS — OCR J277 GCSE Revision Portal</title>
+<style>
+/* ============================================================
+   1. CSS — DESIGN SYSTEM, TOKENS, GLOBAL STYLES
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Light Mode Palette */
+  --bg: #f0f2f5;
+  --bg2: #e2e6ed;
+  --panel: rgba(255,255,255,0.72);
+  --panel-border: rgba(0,180,255,0.3);
+  --text: #0d1117;
+  --text2: #3a4a5c;
+  --accent1: #00c8ff;   /* neon cyan */
+  --accent2: #2979ff;   /* electric blue */
+  --accent3: #e040fb;   /* magenta */
+  --accent4: #7c4dff;   /* purple */
+  --glow1: rgba(0,200,255,0.35);
+  --glow3: rgba(224,64,251,0.3);
+  --card-bg: rgba(255,255,255,0.82);
+  --card-border: rgba(0,180,255,0.4);
+  --nav-bg: rgba(240,242,245,0.92);
+  --grid-color: rgba(0,150,255,0.07);
+  --success: #26c281;
+  --danger: #e53935;
+  --warn: #ff9800;
+  --badge-bg: rgba(0,200,255,0.12);
+  --shadow: 0 8px 32px rgba(0,100,200,0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --font-head: 'Orbitron', 'Share Tech Mono', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #060608;
+  --bg2: #0d0d12;
+  --panel: rgba(18,18,26,0.88);
+  --panel-border: rgba(220,0,60,0.3);
+  --text: #f0f0f0;
+  --text2: #aab0bc;
+  --accent1: #ff1744;
+  --accent2: #ff4444;
+  --accent3: #ff6b6b;
+  --accent4: #cc0000;
+  --glow1: rgba(255,23,68,0.3);
+  --glow3: rgba(204,0,0,0.25);
+  --card-bg: rgba(22,22,32,0.92);
+  --card-border: rgba(220,0,60,0.4);
+  --nav-bg: rgba(8,8,14,0.95);
+  --grid-color: rgba(200,0,50,0.06);
+  --success: #00e676;
+  --danger: #ff1744;
+  --badge-bg: rgba(255,23,68,0.12);
+  --shadow: 0 8px 32px rgba(200,0,50,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+  position: relative;
+}
+
+/* ============================================================
+   2. ANIMATED CYBER GRID BACKGROUND
+   ============================================================ */
+
+#cyber-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#cyber-grid canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ============================================================
+   3. LOADING SCREEN
+   ============================================================ */
+
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #060608;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#loading-screen.hidden { opacity: 0; visibility: hidden; }
+
+.loading-logo {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #00c8ff, #e040fb, #ff1744);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: logoGlow 2s ease-in-out infinite alternate;
+  letter-spacing: 4px;
+}
+
+@keyframes logoGlow {
+  from { filter: drop-shadow(0 0 8px #00c8ff); }
+  to { filter: drop-shadow(0 0 20px #e040fb); }
+}
+
+.loading-sub {
+  font-family: var(--font-mono);
+  color: #00c8ff;
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  opacity: 0.8;
+}
+
+.loading-bar-track {
+  width: min(400px, 80vw);
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00c8ff, #e040fb, #ff1744);
+  border-radius: 2px;
+  animation: loadFill 2.2s ease-in-out forwards;
+}
+
+@keyframes loadFill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.loading-status {
+  font-family: var(--font-mono);
+  color: #aaa;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  animation: blinkStatus 0.8s step-end infinite;
+}
+
+@keyframes blinkStatus {
+  50% { opacity: 0; }
+}
+
+/* ============================================================
+   4. LAYOUT
+   ============================================================ */
+
+#app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   5. NAVIGATION BAR
+   ============================================================ */
+
+#navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--panel-border);
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: background var(--transition);
+}
+
+.nav-logo {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent1), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.nav-sep { flex: 1; }
+
+#nav-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#nav-search {
+  background: var(--bg2);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 7px 16px 7px 36px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  width: 200px;
+  transition: width var(--transition), border-color var(--transition);
+  outline: none;
+}
+
+#nav-search:focus {
+  width: 280px;
+  border-color: var(--accent1);
+  box-shadow: 0 0 0 2px var(--glow1);
+}
+
+#nav-search::placeholder { color: var(--text2); }
+
+.nav-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text2);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent1);
+  color: var(--accent1);
+  background: var(--glow1);
+}
+
+.nav-btn.active {
+  border-color: var(--accent1);
+  color: var(--accent1);
+  background: var(--badge-bg);
+}
+
+#theme-toggle {
+  background: var(--badge-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 50%;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+#theme-toggle:hover { border-color: var(--accent3); transform: rotate(20deg); }
+
+#hamburger {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  color: var(--text);
+  width: 36px; height: 36px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Mobile nav */
+@media (max-width: 768px) {
+  #hamburger { display: flex; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--panel-border);
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 499;
+  }
+  .nav-links.open { display: flex; }
+  #nav-search { width: 160px; }
+  #nav-search:focus { width: 200px; }
+}
+
+/* ============================================================
+   6. VIEWS / PAGES
+   ============================================================ */
+
+.view {
+  display: none;
+  padding-top: 80px;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+.view.active { display: block; }
+
+/* ============================================================
+   7. DASHBOARD / HOME
+   ============================================================ */
+
+#view-home {
+  padding-top: 80px;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  position: relative;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: var(--badge-bg);
+  border: 1px solid var(--accent1);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent1);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+@keyframes pulseBadge {
+  0%,100% { box-shadow: 0 0 6px var(--glow1); }
+  50% { box-shadow: 0 0 18px var(--glow1); }
+}
+
+.hero-title {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  background: linear-gradient(135deg, var(--accent1) 0%, var(--accent3) 50%, var(--accent4) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--text2);
+  max-width: 500px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+
+/* Stats row */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  padding: 0 20px 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 20px 28px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  min-width: 130px;
+  flex: 1;
+  transition: transform var(--transition), box-shadow var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--glow1), transparent, var(--glow3));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.stat-card:hover::before { opacity: 1; }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px var(--glow1); }
+
+.stat-num {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent1);
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text2);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Digital clock */
+#digital-clock {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--accent1);
+  text-align: center;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+  opacity: 0.85;
+}
+
+/* Session timer */
+#session-timer-display {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text2);
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+}
+
+/* Topic grid */
+.section-label {
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--accent1);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+.topic-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.topic-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent3));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+
+.topic-card:hover::after { transform: scaleX(1); }
+
+.topic-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent1);
+  box-shadow: 0 20px 50px var(--glow1);
+}
+
+.topic-icon {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.topic-name {
+  font-family: var(--font-head);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.topic-desc {
+  font-size: 0.82rem;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.topic-progress-wrap {
+  height: 4px;
+  background: var(--bg2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.topic-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent1), var(--accent3));
+  border-radius: 2px;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+
+.topic-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text2);
+}
+
+/* Overall progress */
+.overall-progress-section {
+  max-width: 600px;
+  margin: 0 auto 32px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.overall-bar-track {
+  height: 8px;
+  background: var(--bg2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0 6px;
+  position: relative;
+}
+
+.overall-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent1), var(--accent3), var(--accent4));
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+
+.overall-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 40px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.overall-pct {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  color: var(--accent1);
+}
+
+/* Achievements row on dashboard */
+.achievements-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+}
+
+.badge-item {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0.4;
+  transition: all var(--transition);
+  cursor: default;
+}
+
+.badge-item.unlocked {
+  opacity: 1;
+  border-color: var(--accent3);
+  box-shadow: 0 0 12px var(--glow3);
+  animation: badgeUnlock 0.5s ease;
+}
+
+@keyframes badgeUnlock {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.badge-icon { font-size: 1.5rem; }
+.badge-name { font-size: 0.75rem; font-weight: 600; color: var(--text); }
+.badge-desc { font-size: 0.65rem; color: var(--text2); }
+
+/* Streak display */
+.streak-display {
+  text-align: center;
+  margin-bottom: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--warn);
+  letter-spacing: 2px;
+}
+
+/* ============================================================
+   8. TOPIC VIEW
+   ============================================================ */
+
+.topic-view-header {
+  text-align: center;
+  padding: 40px 20px 24px;
+}
+
+.topic-view-title {
+  font-family: var(--font-head);
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent1), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--badge-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  color: var(--accent1);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  padding: 6px 16px;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 16px;
+  transition: all var(--transition);
+}
+
+.back-btn:hover { border-color: var(--accent1); box-shadow: 0 0 12px var(--glow1); }
+
+/* Tabs */
+.topic-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 0 20px 28px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.tab-btn {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  color: var(--text2);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+.tab-btn:hover { border-color: var(--accent1); color: var(--accent1); }
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--accent1), var(--accent3));
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 16px var(--glow1);
+}
+
+/* Tab content panels */
+.tab-panel { display: none; padding: 0 20px; max-width: 900px; margin: 0 auto; }
+.tab-panel.active { display: block; }
+
+/* ============================================================
+   9. REVISION NOTES
+   ============================================================ */
+
+.notes-section {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+}
+
+.notes-section-title {
+  font-family: var(--font-head);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent1);
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notes-section-title::before {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 16px;
+  background: linear-gradient(180deg, var(--accent1), var(--accent3));
+  border-radius: 2px;
+}
+
+.notes-content { font-size: 0.9rem; line-height: 1.75; color: var(--text); }
+.notes-content p { margin-bottom: 10px; }
+
+.notes-content .highlight {
+  background: var(--badge-bg);
+  border-left: 3px solid var(--accent1);
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  margin: 10px 0;
+  font-style: italic;
+  color: var(--accent1);
+}
+
+.notes-content .key-term {
+  color: var(--accent1);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.notes-content .example {
+  background: rgba(0,200,100,0.08);
+  border-left: 3px solid var(--success);
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  margin: 10px 0;
+  font-size: 0.85rem;
+}
+
+.notes-content .tip {
+  background: rgba(255,152,0,0.1);
+  border-left: 3px solid var(--warn);
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  margin: 10px 0;
+  font-size: 0.85rem;
+}
+
+/* Expandable cards */
+.expand-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+.expand-card:hover { border-color: var(--accent1); }
+
+.expand-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  gap: 12px;
+}
+
+.expand-header:hover { background: var(--badge-bg); }
+
+.expand-arrow {
+  font-size: 0.75rem;
+  transition: transform var(--transition);
+  color: var(--accent1);
+  flex-shrink: 0;
+}
+
+.expand-card.open .expand-arrow { transform: rotate(180deg); }
+
+.expand-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  padding: 0 18px;
+  font-size: 0.87rem;
+  line-height: 1.65;
+  color: var(--text2);
+}
+
+.expand-card.open .expand-body {
+  max-height: 1000px;
+  padding: 0 18px 16px;
+}
+
+/* Comparison table */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 12px;
+}
+
+.compare-table th {
+  background: var(--badge-bg);
+  color: var(--accent1);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.compare-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--panel-border);
+  color: var(--text2);
+  vertical-align: top;
+}
+
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: var(--badge-bg); }
+
+/* ============================================================
+   10. FLASHCARD SYSTEM
+   ============================================================ */
+
+#flashcard-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 0 16px;
+}
+
+.fc-tracker {
+  display: flex;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text2);
+  text-align: center;
+}
+
+.fc-tracker span {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+}
+
+.fc-tracker .known { border-color: var(--success); color: var(--success); }
+.fc-tracker .learning { border-color: var(--danger); color: var(--danger); }
+
+.fc-card-container {
+  width: min(520px, 100%);
+  height: 300px;
+  perspective: 1200px;
+  cursor: pointer;
+  position: relative;
+}
+
+.fc-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+}
+
+.fc-card-inner.flipped { transform: rotateY(180deg); }
+
+.fc-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 40px var(--glow1), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.fc-front {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.fc-back {
+  background: linear-gradient(135deg, var(--card-bg), var(--bg2));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transform: rotateY(180deg);
+  border-color: var(--accent3);
+  box-shadow: 0 8px 40px var(--glow3), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.fc-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: var(--accent1);
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.fc-back .fc-label { color: var(--accent3); }
+
+.fc-question {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.fc-answer {
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.fc-number {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text2);
+  opacity: 0.6;
+}
+
+.fc-hint {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text2);
+  opacity: 0.6;
+  letter-spacing: 1px;
+}
+
+.fc-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.fc-ctrl-btn {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 0.82rem;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fc-ctrl-btn.left-btn:hover { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 12px rgba(255,23,68,0.3); }
+.fc-ctrl-btn.right-btn:hover { border-color: var(--success); color: var(--success); box-shadow: 0 0 12px rgba(38,194,129,0.3); }
+.fc-ctrl-btn.flip-btn:hover { border-color: var(--accent1); color: var(--accent1); }
+
+.fc-progress-row {
+  width: min(520px, 100%);
+}
+
+.fc-progress-track {
+  height: 4px;
+  background: var(--bg2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fc-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent1), var(--accent3));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.fc-slide-out-right { animation: slideOutRight 0.4s ease forwards; }
+.fc-slide-out-left { animation: slideOutLeft 0.4s ease forwards; }
+.fc-slide-in { animation: slideIn 0.4s ease forwards; }
+
+@keyframes slideOutRight {
+  to { transform: translateX(120%) rotate(12deg); opacity: 0; }
+}
+@keyframes slideOutLeft {
+  to { transform: translateX(-120%) rotate(-12deg); opacity: 0; }
+}
+@keyframes slideIn {
+  from { transform: translateX(0) scale(0.88); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+/* ============================================================
+   11. QUIZ SYSTEM
+   ============================================================ */
+
+#quiz-area {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+
+.quiz-score-display {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent1);
+}
+
+.quiz-question-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.quiz-q-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent1);
+  letter-spacing: 3px;
+  margin-bottom: 14px;
+  opacity: 0.8;
+}
+
+.quiz-question-text {
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.quiz-answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 480px) {
+  .quiz-answers { grid-template-columns: 1fr; }
+}
+
+.quiz-answer-btn {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+  line-height: 1.4;
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-answer-btn:hover:not(:disabled) {
+  border-color: var(--accent1);
+  box-shadow: 0 4px 16px var(--glow1);
+  transform: translateY(-2px);
+}
+
+.quiz-answer-btn.correct {
+  border-color: var(--success);
+  background: rgba(38,194,129,0.15);
+  color: var(--success);
+  font-weight: 600;
+}
+
+.quiz-answer-btn.incorrect {
+  border-color: var(--danger);
+  background: rgba(229,57,53,0.15);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.quiz-answer-btn:disabled { cursor: default; }
+
+.quiz-progress-bar-track {
+  height: 6px;
+  background: var(--bg2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.quiz-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent1), var(--accent3));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.quiz-feedback {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text2);
+  min-height: 24px;
+  margin-bottom: 16px;
+}
+
+.quiz-next-btn {
+  display: block;
+  margin: 0 auto;
+  background: linear-gradient(135deg, var(--accent1), var(--accent3));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 12px 32px;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: none;
+}
+
+.quiz-next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--glow3); }
+.quiz-next-btn.visible { display: block; }
+
+/* Screen flash */
+.screen-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.screen-flash.green { background: rgba(38,194,129,0.15); }
+.screen-flash.red { background: rgba(229,57,53,0.15); }
+.screen-flash.show { opacity: 1; }
+
+/* Summary screen */
+.quiz-summary {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 40px 28px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.quiz-summary-title {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  color: var(--accent1);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.quiz-summary-score {
+  font-family: var(--font-head);
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent1), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.quiz-summary-grade {
+  font-size: 1rem;
+  color: var(--text2);
+  margin-bottom: 24px;
+}
+
+.quiz-retry-btn {
+  background: linear-gradient(135deg, var(--accent2), var(--accent4));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 14px 36px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.quiz-retry-btn:hover { transform: scale(1.04); box-shadow: 0 8px 24px var(--glow1); }
+
+/* ============================================================
+   12. EXAM PRACTICE
+   ============================================================ */
+
+.exam-question {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.exam-q-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.exam-q-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent3);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.exam-marks {
+  background: var(--badge-bg);
+  border: 1px solid var(--accent3);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent3);
+  white-space: nowrap;
+}
+
+.exam-q-text {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.exam-reveal-btn {
+  background: var(--badge-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  color: var(--text2);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: 14px;
+}
+
+.exam-reveal-btn:hover { border-color: var(--accent1); color: var(--accent1); }
+
+.exam-model-answer {
+  display: none;
+  background: rgba(0,200,100,0.07);
+  border: 1px solid rgba(38,194,129,0.3);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 0.87rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.exam-model-answer.visible { display: block; }
+
+.exam-tip {
+  display: none;
+  background: rgba(255,152,0,0.08);
+  border: 1px solid rgba(255,152,0,0.3);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.82rem;
+  color: var(--warn);
+}
+
+.exam-tip.visible { display: block; }
+.exam-tip-label { font-weight: 700; margin-bottom: 4px; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2px; }
+
+/* ============================================================
+   13. GLOSSARY
+   ============================================================ */
+
+.glossary-search-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+#glossary-search {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px 16px 12px 42px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+#glossary-search:focus { border-color: var(--accent1); box-shadow: 0 0 0 2px var(--glow1); }
+#glossary-search::placeholder { color: var(--text2); }
+
+.glossary-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text2);
+  pointer-events: none;
+}
+
+.glossary-alpha-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.alpha-btn {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  color: var(--text2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 5px 9px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.alpha-btn:hover, .alpha-btn.active {
+  border-color: var(--accent1);
+  color: var(--accent1);
+  background: var(--badge-bg);
+}
+
+.glossary-list { display: flex; flex-direction: column; gap: 8px; }
+
+.glossary-entry {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+.glossary-entry:hover { border-color: var(--accent1); }
+
+.glossary-term-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.glossary-term-header:hover { background: var(--badge-bg); }
+
+.glossary-term {
+  font-weight: 700;
+  color: var(--accent1);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.glossary-def-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.3s ease;
+  padding: 0 18px;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--text2);
+}
+
+.glossary-entry.open .glossary-def-body {
+  max-height: 300px;
+  padding: 0 18px 14px;
+}
+
+/* ============================================================
+   14. MOCK EXAM
+   ============================================================ */
+
+.mock-config {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  max-width: 500px;
+  margin: 0 auto 24px;
+}
+
+.mock-config h2 {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  color: var(--accent1);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.mock-config p { font-size: 0.87rem; color: var(--text2); margin-bottom: 24px; }
+
+.mock-start-btn {
+  background: linear-gradient(135deg, var(--accent1), var(--accent3));
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 1rem;
+  font-family: var(--font-head);
+  font-weight: 700;
+  padding: 16px 40px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all var(--transition);
+}
+
+.mock-start-btn:hover { transform: scale(1.04); box-shadow: 0 12px 30px var(--glow3); }
+
+.mock-progress {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text2);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ============================================================
+   15. SEARCH RESULTS
+   ============================================================ */
+
+.search-results-list { display: flex; flex-direction: column; gap: 10px; }
+
+.search-result-item {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+.search-result-item:hover {
+  border-color: var(--accent1);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px var(--glow1);
+}
+
+.search-result-term {
+  font-weight: 700;
+  color: var(--accent1);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+.search-result-context {
+  font-size: 0.82rem;
+  color: var(--text2);
+}
+
+.search-result-topic {
+  font-size: 0.72rem;
+  color: var(--accent3);
+  font-family: var(--font-mono);
+  margin-top: 6px;
+}
+
+/* ============================================================
+   16. UTILITIES & ANIMATIONS
+   ============================================================ */
+
+.cyber-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent1), transparent);
+  margin: 24px 0;
+  opacity: 0.4;
+}
+
+.glow-text {
+  color: var(--accent1);
+  text-shadow: 0 0 10px var(--glow1);
+}
+
+.tag {
+  display: inline-block;
+  background: var(--badge-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text2);
+  margin: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent1); border-radius: 3px; }
+
+/* Random question tool */
+.random-tool-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.random-tool-btn {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  color: var(--text2);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.random-tool-btn:hover { border-color: var(--accent3); color: var(--accent3); box-shadow: 0 0 10px var(--glow3); }
+
+/* Challenge mode */
+.challenge-card {
+  background: linear-gradient(135deg, var(--panel), var(--bg2));
+  border: 1px solid var(--accent3);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: 0 0 30px var(--glow3);
+}
+
+.challenge-word {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  color: var(--accent3);
+  margin-bottom: 12px;
+  letter-spacing: 3px;
+}
+
+.challenge-hint {
+  font-size: 0.85rem;
+  color: var(--text2);
+  margin-bottom: 20px;
+}
+
+.challenge-input {
+  background: var(--bg2);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 12px 18px;
+  width: min(300px, 100%);
+  outline: none;
+  transition: border-color var(--transition);
+  margin-bottom: 12px;
+}
+
+.challenge-input:focus { border-color: var(--accent1); box-shadow: 0 0 0 2px var(--glow1); }
+
+/* Memory aid */
+.memory-aid {
+  background: linear-gradient(135deg, var(--badge-bg), transparent);
+  border: 1px solid var(--accent4);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 10px 0;
+  font-size: 0.87rem;
+  color: var(--text);
+}
+
+.memory-aid-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: var(--accent4);
+  margin-bottom: 6px;
+}
+
+/* Interactive diagram */
+.diagram-wrap {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 16px 0;
+  position: relative;
+}
+
+.diagram-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeInUp 0.5s ease forwards; }
+
+/* Checklist */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--panel-border);
+  font-size: 0.87rem;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.checklist li:last-child { border-bottom: none; }
+.checklist li:hover { color: var(--accent1); }
+
+.checklist-check {
+  width: 20px; height: 20px;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.checklist li.done .checklist-check {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+
+/* Notification toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--panel);
+  border: 1px solid var(--accent1);
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--accent1);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px var(--glow1);
+  z-index: 800;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ============================================================
+   17. RESPONSIVE TWEAKS
+   ============================================================ */
+
+@media (max-width: 600px) {
+  .topic-grid { grid-template-columns: 1fr; }
+  .stats-row { flex-direction: column; }
+  .fc-controls { flex-wrap: wrap; justify-content: center; }
+  .fc-card-container { height: 260px; }
+}
+
+/* ============================================================
+   18. CIRCUIT PATTERN OVERLAY (SVG based)
+   ============================================================ */
+
+.circuit-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2300c8ff' stroke-width='0.5'%3E%3Cpath d='M10 10h60v60H10z'/%3E%3Cpath d='M10 40h15M55 40h15M40 10v15M40 55v15'/%3E%3Ccircle cx='40' cy='40' r='5'/%3E%3Ccircle cx='10' cy='10' r='3'/%3E%3Ccircle cx='70' cy='10' r='3'/%3E%3Ccircle cx='10' cy='70' r='3'/%3E%3Ccircle cx='70' cy='70' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+</style>
+</head>
+<body>
+
+<!-- Screen flash overlay for quiz feedback -->
+<div id="screen-flash" class="screen-flash"></div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast"></div>
+
+<!-- ============================================================
+     LOADING SCREEN
+     ============================================================ -->
+<div id="loading-screen">
+  <div class="loading-logo">CYBER//CS</div>
+  <div class="loading-sub">OCR J277 · GCSE REVISION PORTAL</div>
+  <div class="loading-bar-track">
+    <div class="loading-bar-fill"></div>
+  </div>
+  <div class="loading-status" id="loading-status">INITIALISING SYSTEMS...</div>
+</div>
+
+<!-- ============================================================
+     CYBER GRID BACKGROUND
+     ============================================================ -->
+<div id="cyber-grid"><canvas id="grid-canvas"></canvas></div>
+<div class="circuit-overlay"></div>
+
+<!-- ============================================================
+     NAVIGATION BAR
+     ============================================================ -->
+<nav id="navbar" role="navigation" aria-label="Main Navigation">
+  <a class="nav-logo" onclick="showView('home')" role="link" tabindex="0">CYBER//CS</a>
+
+  <div id="nav-search-wrap">
+    <span class="nav-search-icon">&#128269;</span>
+    <input type="text" id="nav-search" placeholder="Search topics, terms..." autocomplete="off"
+           aria-label="Search knowledge base" oninput="handleNavSearch(this.value)">
+  </div>
+
+  <div class="nav-sep"></div>
+
+  <div class="nav-links" id="nav-links">
+    <button class="nav-btn" onclick="showView('home')" id="nav-home">&#127968; Home</button>
+    <button class="nav-btn" onclick="showView('glossary')" id="nav-glossary">&#128218; Glossary</button>
+    <button class="nav-btn" onclick="showView('mock')" id="nav-mock">&#128196; Mock Exam</button>
+    <button class="nav-btn" onclick="showView('achievements')" id="nav-ach">&#127942; Badges</button>
+  </div>
+
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode" title="Toggle theme">&#9790;</button>
+  <button id="hamburger" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button>
+</nav>
+
+<!-- ============================================================
+     HOME / DASHBOARD VIEW
+     ============================================================ -->
+<div id="view-home" class="view active">
+  <div class="hero">
+    <div class="hero-badge">OCR J277 · COMPUTER SCIENCE · GCSE</div>
+    <h1 class="hero-title">CYBER//CS<br>REVISION PORTAL</h1>
+    <p class="hero-sub">A premium cyberpunk knowledge organiser covering all 5 OCR J277 topics. Interactive flashcards, quizzes, exam practice &amp; more.</p>
+    <div id="digital-clock">--:--:--</div>
+    <div id="session-timer-display">SESSION: 00:00:00</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-num" id="stat-topics">5</span>
+      <div class="stat-label">TOPICS</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="stat-flashcards">100</span>
+      <div class="stat-label">FLASHCARDS</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="stat-questions">75</span>
+      <div class="stat-label">QUIZ QUESTIONS</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="stat-known">0</span>
+      <div class="stat-label">CARDS KNOWN</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="stat-quizzes">0</span>
+      <div class="stat-label">QUIZZES DONE</div>
+    </div>
+  </div>
+
+  <!-- Streak -->
+  <div class="streak-display" id="streak-display">&#128293; REVISION STREAK: 1 DAY</div>
+
+  <!-- Overall Progress -->
+  <div class="overall-progress-section">
+    <div class="section-label">OVERALL COMPLETION</div>
+    <div class="overall-pct" id="overall-pct">0%</div>
+    <div class="overall-bar-track">
+      <div class="overall-bar-fill" id="overall-bar" style="width:0%"></div>
+    </div>
+    <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text2);">Complete flashcard decks and quizzes to increase your score</div>
+  </div>
+
+  <!-- Topics -->
+  <div class="section-label">TOPICS</div>
+  <div class="topic-grid" id="topic-grid"></div>
+
+  <!-- Checklist -->
+  <div style="max-width:600px;margin:0 auto 32px;padding:0 20px;">
+    <div class="section-label">TOPIC CHECKLIST</div>
+    <ul class="checklist" id="topic-checklist"></ul>
+  </div>
+
+  <!-- Achievements -->
+  <div class="section-label">ACHIEVEMENTS</div>
+  <div class="achievements-strip" id="dashboard-badges"></div>
+</div>
+
+<!-- ============================================================
+     TOPIC VIEW (dynamic, reused for all topics)
+     ============================================================ -->
+<div id="view-topic" class="view">
+  <div class="topic-view-header">
+    <button class="back-btn" onclick="showView('home')">&#8592; Back to Dashboard</button>
+    <h1 class="topic-view-title" id="topic-view-title">Topic Name</h1>
+    <p style="color:var(--text2);font-size:0.85rem;max-width:600px;margin:0 auto;" id="topic-view-desc"></p>
+  </div>
+
+  <div class="topic-tabs">
+    <button class="tab-btn active" id="tab-notes-btn" onclick="switchTab('notes')">&#128196; Notes</button>
+    <button class="tab-btn" id="tab-fc-btn" onclick="switchTab('flashcards')">&#127183; Flashcards</button>
+    <button class="tab-btn" id="tab-quiz-btn" onclick="switchTab('quiz')">&#10067; Quiz</button>
+    <button class="tab-btn" id="tab-exam-btn" onclick="switchTab('exam')">&#9998; Exam Practice</button>
+    <button class="tab-btn" id="tab-tools-btn" onclick="switchTab('tools')">&#128295; Tools</button>
+  </div>
+
+  <!-- NOTES TAB -->
+  <div class="tab-panel active" id="tab-notes">
+    <div id="notes-content-area"></div>
+  </div>
+
+  <!-- FLASHCARDS TAB -->
+  <div class="tab-panel" id="tab-flashcards">
+    <div id="flashcard-area">
+      <div class="fc-tracker">
+        <span>CARD: <strong id="fc-current">1</strong> / <strong id="fc-total">20</strong></span>
+        <span class="known">KNOWN: <strong id="fc-known-count">0</strong></span>
+        <span class="learning">LEARNING: <strong id="fc-learning-count">0</strong></span>
+        <span>DECK: <strong id="fc-pct">0%</strong></span>
+      </div>
+      <div class="fc-progress-row">
+        <div class="fc-progress-track">
+          <div class="fc-progress-fill" id="fc-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="fc-card-container" id="fc-card-container" onclick="flipCard()">
+        <div class="fc-card-inner" id="fc-card-inner">
+          <div class="fc-face fc-front">
+            <div class="fc-label">QUESTION</div>
+            <div class="fc-question" id="fc-question-text">Loading...</div>
+            <div class="fc-number" id="fc-card-num">1/20</div>
+          </div>
+          <div class="fc-face fc-back">
+            <div class="fc-label">ANSWER</div>
+            <div class="fc-answer" id="fc-answer-text">Answer here</div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-hint">SPACE = flip &nbsp;|&nbsp; &#8594; = known &nbsp;|&nbsp; &#8592; = learning</div>
+      <div class="fc-controls">
+        <button class="fc-ctrl-btn left-btn" onclick="markCard('learning')">&#8592; Learning</button>
+        <button class="fc-ctrl-btn flip-btn" onclick="flipCard()">&#9654; Flip</button>
+        <button class="fc-ctrl-btn right-btn" onclick="markCard('known')">Known &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ TAB -->
+  <div class="tab-panel" id="tab-quiz">
+    <div id="quiz-area">
+      <div id="quiz-main"></div>
+    </div>
+  </div>
+
+  <!-- EXAM PRACTICE TAB -->
+  <div class="tab-panel" id="tab-exam">
+    <div id="exam-area" style="max-width:700px;margin:0 auto;"></div>
+  </div>
+
+  <!-- TOOLS TAB -->
+  <div class="tab-panel" id="tab-tools">
+    <div style="max-width:700px;margin:0 auto;">
+      <div class="section-label" style="text-align:left;margin-bottom:16px;">REVISION TOOLS</div>
+      <div class="random-tool-bar">
+        <button class="random-tool-btn" onclick="randomFlashcard()">&#127922; Random Flashcard</button>
+        <button class="random-tool-btn" onclick="randomQuestion()">&#10067; Random Question</button>
+        <button class="random-tool-btn" onclick="startChallenge()">&#127919; Challenge Mode</button>
+      </div>
+      <div id="tools-output"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     GLOSSARY VIEW
+     ============================================================ -->
+<div id="view-glossary" class="view">
+  <div style="max-width:800px;margin:0 auto;padding:0 20px;">
+    <div class="topic-view-header">
+      <button class="back-btn" onclick="showView('home')">&#8592; Back</button>
+      <h1 class="topic-view-title">&#128218; GLOSSARY</h1>
+      <p style="color:var(--text2);font-size:0.85rem;">All major OCR J277 Computer Science terms in one place.</p>
+    </div>
+    <div class="glossary-search-wrap">
+      <span class="glossary-search-icon">&#128269;</span>
+      <input type="text" id="glossary-search" placeholder="Search terms..." oninput="filterGlossary(this.value)" aria-label="Search glossary">
+    </div>
+    <div class="glossary-alpha-filter" id="alpha-filter"></div>
+    <div class="glossary-list" id="glossary-list"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MOCK EXAM VIEW
+     ============================================================ -->
+<div id="view-mock" class="view">
+  <div style="max-width:800px;margin:0 auto;padding:0 20px;">
+    <div class="topic-view-header">
+      <button class="back-btn" onclick="showView('home')">&#8592; Back</button>
+      <h1 class="topic-view-title">&#128196; MOCK EXAM</h1>
+    </div>
+    <div id="mock-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SEARCH RESULTS VIEW
+     ============================================================ -->
+<div id="view-search" class="view">
+  <div style="max-width:800px;margin:0 auto;padding:0 20px;">
+    <div class="topic-view-header">
+      <button class="back-btn" onclick="showView('home')">&#8592; Back</button>
+      <h1 class="topic-view-title">&#128269; SEARCH RESULTS</h1>
+    </div>
+    <div id="search-results-area"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ACHIEVEMENTS VIEW
+     ============================================================ -->
+<div id="view-achievements" class="view">
+  <div style="max-width:800px;margin:0 auto;padding:0 20px;">
+    <div class="topic-view-header">
+      <button class="back-btn" onclick="showView('home')">&#8592; Back</button>
+      <h1 class="topic-view-title">&#127942; ACHIEVEMENTS</h1>
+    </div>
+    <div class="achievements-strip" id="ach-full-list" style="flex-direction:column;align-items:stretch;"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA OBJECTS — OCR J277 GCSE Computer Science
+   ============================================================ */
+
+const TOPICS = [
+  {
+    id: 'systems-architecture',
+    icon: '🖥️',
+    name: 'Systems Architecture',
+    desc: 'CPU design, Von Neumann model, fetch-decode-execute, performance factors, embedded systems.',
+    notes: [
+      {
+        title: 'The CPU & Von Neumann Architecture',
+        content: `<p>The <span class="key-term">Central Processing Unit (CPU)</span> is the brain of a computer, responsible for executing instructions. Modern CPUs are based on the <span class="key-term">Von Neumann architecture</span>, proposed by John Von Neumann in 1945.</p>
+<p>The Von Neumann model stores both program instructions and data in the same memory space (RAM). This is called <strong>stored-program concept</strong>.</p>
+<div class="highlight">Key components: ALU, Control Unit, Registers, Clock, Cache, Buses (data, address, control)</div>
+<p><strong>ALU (Arithmetic Logic Unit)</strong> — performs mathematical calculations (+, −, ×, ÷) and logical operations (AND, OR, NOT, comparisons).</p>
+<p><strong>Control Unit (CU)</strong> — fetches, decodes and executes instructions; co-ordinates all CPU components; sends control signals.</p>
+<p><strong>Registers</strong> — tiny, ultra-fast storage locations inside the CPU.</p>
+<div class="example">EXAMPLE: When you open a browser, the CPU fetches the instruction, decodes it (works out it must load program), then executes (loads bytes from storage into RAM).</div>`
+      },
+      {
+        title: 'Key CPU Registers',
+        content: `<ul style="list-style:none;padding:0;">
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>PC</strong> — Program Counter: holds address of NEXT instruction to fetch</li>
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>MAR</strong> — Memory Address Register: holds address currently being read/written</li>
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>MDR</strong> — Memory Data Register: holds data fetched from / to be written to memory</li>
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>CIR</strong> — Current Instruction Register: holds instruction currently being decoded/executed</li>
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>ACC</strong> — Accumulator: holds result of ALU operations</li>
+</ul>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>Peter Must Meet Current Applications → PC, MAR, MDR, CIR, ACC</div>`
+      },
+      {
+        title: 'Fetch-Decode-Execute Cycle',
+        content: `<p>The FDE cycle is the continuous process the CPU uses to execute instructions:</p>
+<p><strong>1. FETCH:</strong> PC → MAR → MDR (reads instruction from memory). PC increments (+1 or word size).</p>
+<p><strong>2. DECODE:</strong> MDR → CIR. Control unit interprets the opcode to determine operation.</p>
+<p><strong>3. EXECUTE:</strong> ALU performs calculation or data is moved/stored. Results stored in ACC or memory.</p>
+<div class="highlight">The cycle repeats billions of times per second (governed by clock speed).</div>
+<div class="tip">OCR EXAM TIP: Questions often ask you to describe what happens in each stage — always use register names (MAR, MDR, PC, CIR) for full marks.</div>`
+      },
+      {
+        title: 'CPU Performance Factors',
+        content: `<p>Three main factors affect CPU performance:</p>
+<p><span class="key-term">Clock Speed</span> — measured in GHz (gigahertz). 1 GHz = 1 billion cycles per second. Higher = faster. A 3.5 GHz CPU can perform ~3.5 billion FDE cycles/sec.</p>
+<p><span class="key-term">Number of Cores</span> — each core is an independent processing unit. Multi-core CPUs can execute multiple FDE cycles simultaneously (parallel processing). Dual-core, quad-core, octa-core etc.</p>
+<p><span class="key-term">Cache Size</span> — very fast memory (SRAM) inside/near the CPU. Stores frequently used instructions/data. Levels: L1 (smallest, fastest), L2, L3 (largest, slower). Larger cache → fewer slow RAM accesses.</p>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>3Cs of CPU Speed: Clock, Cores, Cache</div>
+<div class="tip">COMMON MISTAKE: Students confuse RAM size with cache. Cache is INSIDE the CPU and much smaller but faster. RAM is separate.</div>`
+      },
+      {
+        title: 'Embedded Systems',
+        content: `<p>An <span class="key-term">embedded system</span> is a computer system with a dedicated function within a larger mechanical or electrical system.</p>
+<p><strong>Characteristics:</strong> single purpose, real-time operation, low cost/power, often not user-programmable.</p>
+<div class="example">EXAMPLES: Washing machine controller, microwave timer, engine management unit (car), pacemaker, traffic light controller, smart thermostat.</div>
+<p><strong>Advantages:</strong> cheap to manufacture, energy efficient, small/compact, reliable (limited software = fewer bugs), fast response.</p>
+<p><strong>Disadvantages:</strong> cannot be repurposed, limited to fixed task, upgrades require hardware replacement.</p>`
+      }
+    ],
+    expandable: [
+      { title: 'Advantages & Disadvantages of Multiple Cores', content: '<strong>Advantages:</strong> True parallel processing, better multitasking, handles multi-threaded apps faster, good for gaming/video editing.<br><br><strong>Disadvantages:</strong> Not all software is optimised for multi-core, higher power consumption, more heat generated, increased manufacturing complexity. Doubling cores does NOT double speed.' },
+      { title: 'Comparison: Von Neumann vs Harvard Architecture', content: '<strong>Von Neumann:</strong> Single memory for instructions and data. Simpler, used in most general purpose computers. Bottleneck when both need to be accessed simultaneously ("Von Neumann bottleneck").<br><br><strong>Harvard:</strong> Separate memory for instructions and data. Faster (both can be accessed simultaneously). Used in microcontrollers and DSPs. More expensive and complex.' },
+      { title: 'Common Mistakes on CPU Questions', content: '1. Saying CPU "stores" data long-term — it uses RAM/storage, not the CPU itself.<br>2. Confusing PC (Program Counter) with personal computer.<br>3. Saying cache IS RAM — it is different (SRAM vs DRAM).<br>4. Stating that more cores always means faster for ALL tasks — single-threaded apps only use one core.<br>5. Forgetting to mention that the PC increments after fetch.' },
+      { title: 'OCR Exam Tips — Systems Architecture', content: '• Questions using "describe" need at least 2 linked points.<br>• For "explain" questions, always state the effect: e.g. "A higher clock speed means more FDE cycles per second, therefore instructions execute faster."<br>• When listing registers, use full names AND abbreviations.<br>• FDE questions may ask in order — never mix up stages.<br>• 6-mark questions usually need a balanced answer with at least 3 distinct points per side.' }
+    ],
+    compareTable: {
+      headers: ['Feature', 'More Cores', 'Higher Clock Speed', 'Larger Cache'],
+      rows: [
+        ['Effect', 'Parallel tasks', 'Faster single tasks', 'Less RAM access'],
+        ['Best for', 'Multitasking, video editing', 'Gaming, single-threaded apps', 'Repetitive instruction sets'],
+        ['Power use', 'Higher', 'Higher', 'Slightly higher'],
+        ['Cost', 'High', 'Moderate', 'High']
+      ]
+    },
+    flashcards: [
+      { q: 'What does CPU stand for?', a: 'Central Processing Unit — the main component that executes instructions in a computer.' },
+      { q: 'What is the Von Neumann architecture?', a: 'A computer design where data AND program instructions share the same memory (RAM). Forms the basis of most modern computers.' },
+      { q: 'What does the ALU do?', a: 'Arithmetic Logic Unit — performs arithmetic operations (+, −, ×, ÷) and logical comparisons (AND, OR, NOT, =, >, <).' },
+      { q: 'What does the Control Unit do?', a: 'Coordinates all CPU components; fetches, decodes and controls execution of instructions; sends control signals to other parts.' },
+      { q: 'What is the Program Counter (PC)?', a: 'A register that holds the memory address of the NEXT instruction to be fetched.' },
+      { q: 'What is the MAR?', a: 'Memory Address Register — holds the address of the memory location currently being read from or written to.' },
+      { q: 'What is the MDR?', a: 'Memory Data Register — holds the data that has been fetched from memory or is about to be written to memory.' },
+      { q: 'What is the CIR?', a: 'Current Instruction Register — holds the instruction currently being decoded and executed by the CPU.' },
+      { q: 'What is the Accumulator (ACC)?', a: 'A register that stores the results of calculations performed by the ALU.' },
+      { q: 'Describe the Fetch stage of the FDE cycle.', a: 'The address in the PC is copied to the MAR. The instruction at that address is fetched from memory into the MDR. The PC is incremented.' },
+      { q: 'Describe the Decode stage of the FDE cycle.', a: 'The contents of the MDR are copied to the CIR. The Control Unit decodes the instruction to determine what operation to perform.' },
+      { q: 'Describe the Execute stage of the FDE cycle.', a: 'The decoded instruction is carried out — e.g. the ALU performs a calculation, data is moved, or a jump is made. Result stored in ACC or memory.' },
+      { q: 'What is clock speed and how does it affect performance?', a: 'Clock speed (measured in GHz) is the number of FDE cycles the CPU can perform per second. Higher clock speed = more instructions per second = faster performance.' },
+      { q: 'How do multiple cores improve CPU performance?', a: 'Each core is an independent processor, allowing multiple instructions to execute simultaneously (parallel processing), improving multitasking and multi-threaded applications.' },
+      { q: 'What is cache memory and why is it used?', a: 'Cache is small, very fast SRAM memory inside/near the CPU that stores frequently used instructions and data, reducing slow accesses to RAM.' },
+      { q: 'What are the three levels of cache?', a: 'L1 (smallest, fastest, inside CPU core), L2 (medium, close to core), L3 (largest, slowest of the three, shared between cores).' },
+      { q: 'What is an embedded system?', a: 'A computer system with a dedicated, fixed function built into a larger device — e.g. washing machine controller, pacemaker, car ECU.' },
+      { q: 'Give TWO advantages of embedded systems.', a: '1. Low cost to manufacture. 2. Energy efficient. 3. Reliable (limited software = fewer bugs). 4. Compact and small size.' },
+      { q: 'What is the "Von Neumann bottleneck"?', a: 'The limitation caused by the CPU and memory sharing a single bus — instructions and data cannot be fetched simultaneously, slowing performance.' },
+      { q: 'What are the three types of bus in a CPU system?', a: 'Data bus (carries data), Address bus (carries memory addresses), Control bus (carries control signals — read/write commands, clock signal).' }
+    ],
+    quiz: [
+      { q: 'What does CPU stand for?', opts: ['Central Processing Unit', 'Computer Processing Utility', 'Core Program Unit', 'Central Program Utility'], ans: 0 },
+      { q: 'Which register holds the address of the NEXT instruction to be fetched?', opts: ['MAR', 'MDR', 'PC', 'CIR'], ans: 2 },
+      { q: 'In the Fetch stage of the FDE cycle, what happens to the Program Counter?', opts: ['It is reset to zero', 'It is incremented by 1 (or word size)', 'It is copied to the CIR', 'It is cleared'], ans: 1 },
+      { q: 'Which component performs arithmetic and logical operations?', opts: ['Control Unit', 'Program Counter', 'Cache', 'ALU'], ans: 3 },
+      { q: 'What is cache memory?', opts: ['Large slow storage for files', 'Small fast memory near/inside the CPU for frequently used data', 'A type of ROM', 'Secondary storage'], ans: 1 },
+      { q: 'Which bus carries memory addresses?', opts: ['Data bus', 'Control bus', 'Address bus', 'Memory bus'], ans: 2 },
+      { q: 'A CPU has a clock speed of 3 GHz. How many FDE cycles can it perform per second?', opts: ['3 million', '3 thousand', '3 billion', '300 million'], ans: 2 },
+      { q: 'Which architecture stores program instructions and data in the SAME memory?', opts: ['Harvard Architecture', 'Von Neumann Architecture', 'Parallel Architecture', 'RISC Architecture'], ans: 1 },
+      { q: 'Which is the FASTEST type of cache?', opts: ['L3', 'L2', 'L1', 'L4'], ans: 2 },
+      { q: 'Which of the following is an example of an embedded system?', opts: ['A desktop PC', 'A washing machine controller', 'A web server', 'A gaming laptop'], ans: 1 },
+      { q: 'What does the MDR hold?', opts: ['Address of next instruction', 'Data fetched from or to be written to memory', 'Current instruction being decoded', 'Result of ALU operation'], ans: 1 },
+      { q: 'What is the purpose of the Control Unit?', opts: ['Perform calculations', 'Store long-term data', 'Fetch, decode, and control execution of instructions', 'Manage screen display'], ans: 2 },
+      { q: 'What is a disadvantage of having more CPU cores?', opts: ['Slower clock speed', 'Less cache', 'Not all software is optimised for multi-core; higher power use', 'Smaller registers'], ans: 2 },
+      { q: 'What does the MAR store?', opts: ['The result of the last operation', 'The memory address being read/written', 'The current instruction', 'The next instruction address'], ans: 1 },
+      { q: 'What is the Accumulator used for?', opts: ['Counting clock cycles', 'Holding the address of the next instruction', 'Storing results of ALU calculations', 'Holding data from memory'], ans: 2 }
+    ],
+    exam: [
+      { q: 'Describe the role of the Control Unit (CU) in the CPU.', marks: 3, answer: 'The Control Unit coordinates all components of the CPU. It fetches instructions from memory (via the MAR and MDR), decodes each instruction to determine what operation is required, and sends control signals to the relevant components (e.g. ALU, memory) to execute the instruction. It also controls the data buses.', tip: 'For 3 marks, give 3 distinct points. Use the terms: fetch, decode, execute, control signals.' },
+      { q: 'Explain how increasing clock speed improves CPU performance.', marks: 2, answer: 'A higher clock speed means more FDE cycles can be completed per second. This means instructions are fetched and executed more frequently, so programs run faster overall.', tip: 'Always link "more cycles" to a tangible effect — "programs run faster" or "more instructions per second".' },
+      { q: 'Compare Von Neumann and Harvard architectures. Give one advantage of each.', marks: 4, answer: 'Von Neumann: Instructions and data share the same memory bus. Advantage: simpler to design and cheaper to manufacture. Harvard: Separate buses/memory for instructions and data. Advantage: both can be accessed simultaneously, removing the bottleneck and improving speed. Von Neumann is used in general-purpose computers; Harvard in microcontrollers/embedded systems.', tip: 'Always name BOTH architectures, state the key difference, and give a distinct advantage for each.' },
+      { q: 'A student says "buying a CPU with more cores will always make their computer faster." Evaluate this statement.', marks: 4, answer: 'The statement is only partially correct. More cores allow parallel processing, so tasks that are multi-threaded (e.g. video editing, gaming) will run faster as multiple instructions execute simultaneously. However, not all software is optimised for multiple cores. Single-threaded applications only use one core, so additional cores provide no benefit for those tasks. Other factors such as clock speed and cache size also affect overall performance.', tip: 'Evaluation questions need BOTH sides. State when more cores DO help AND when they DON\'t.' },
+      { q: 'Describe the Fetch-Decode-Execute cycle.', marks: 6, answer: 'FETCH: The address stored in the Program Counter (PC) is copied to the Memory Address Register (MAR). The instruction stored at that memory address is fetched and placed into the Memory Data Register (MDR). The PC is then incremented to point to the next instruction. DECODE: The contents of the MDR are copied to the Current Instruction Register (CIR). The Control Unit decodes the instruction, identifying the opcode and any operands. EXECUTE: The decoded instruction is carried out. If it is arithmetic/logical, the ALU performs the operation and stores the result in the Accumulator. If it is a data movement instruction, data is transferred between registers or memory. The cycle then repeats.', tip: 'A 6-mark FDE answer needs all three stages clearly labelled, register names used, and the process described in the correct order.' }
+    ]
+  },
+
+  {
+    id: 'memory-storage',
+    icon: '💾',
+    name: 'Memory & Storage',
+    desc: 'RAM, ROM, cache, virtual memory, storage devices, types, capacity and speed comparisons.',
+    notes: [
+      {
+        title: 'RAM and ROM',
+        content: `<p><span class="key-term">RAM (Random Access Memory)</span> is volatile, temporary storage used to hold currently running programs and data. Contents are LOST when power is removed.</p>
+<p><span class="key-term">ROM (Read-Only Memory)</span> is non-volatile, permanent storage that cannot be written to by normal operation. Holds firmware — e.g. BIOS/UEFI startup instructions.</p>
+<div class="highlight">Key difference: RAM = temporary (volatile), ROM = permanent (non-volatile)</div>
+<div class="example">EXAMPLE: RAM holds your open browser tab. ROM holds the startup instructions that run when you press the power button.</div>
+<div class="tip">OCR TIP: When asked to compare RAM and ROM, always address: volatility, read/write ability, and purpose.</div>`
+      },
+      {
+        title: 'Types of Storage',
+        content: `<p>There are three main types of storage:</p>
+<p><span class="key-term">Magnetic Storage</span> — HDD (Hard Disk Drive). Data stored as magnetic patterns on spinning platters. Cheapest per GB. Slow mechanical read/write. Fragile (moving parts). Used for bulk storage.</p>
+<p><span class="key-term">Solid-State Storage</span> — SSD, USB flash drive, SD card. Uses NAND flash memory (no moving parts). Fast, silent, durable, expensive per GB, limited write cycles.</p>
+<p><span class="key-term">Optical Storage</span> — CD, DVD, Blu-ray. Data stored as pits and lands on a disc, read by laser. Very cheap media, slow, used for distribution/archiving.</p>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>MSO = Magnetic, Solid-state, Optical — "My Storage Options"</div>`
+      },
+      {
+        title: 'Storage Characteristics',
+        content: `<p>When comparing storage, consider these four factors:</p>
+<p><strong>Capacity</strong> — how much data can be stored (bytes → KB → MB → GB → TB → PB). HDDs typically offer the most capacity per pound.</p>
+<p><strong>Speed</strong> — how fast data can be read/written. SSD >> HDD >> Optical.</p>
+<p><strong>Portability</strong> — ease of transport. USB flash drives and SD cards are highly portable. HDDs are moderate. Optical discs portable but fragile.</p>
+<p><strong>Durability</strong> — resistance to damage. SSDs most durable (no moving parts). HDDs fragile (spinning platters). Optical prone to scratches.</p>
+<p><strong>Cost</strong> — SSDs most expensive per GB, HDDs cheapest for large capacity, optical cheapest media.</p>`
+      },
+      {
+        title: 'Virtual Memory',
+        content: `<p><span class="key-term">Virtual Memory</span> is a section of the hard drive/SSD used as an extension of RAM when physical RAM is full.</p>
+<p>The OS moves less-used pages from RAM to a <em>page file</em> on the storage device, freeing up RAM for current tasks.</p>
+<div class="highlight">Virtual memory allows more programs to run simultaneously than physical RAM would allow, but is significantly SLOWER than real RAM.</div>
+<div class="example">EXAMPLE: If you have 8 GB RAM and open too many applications, Windows will use part of the SSD as virtual memory, slowing performance.</div>
+<div class="tip">COMMON MISTAKE: Virtual memory does NOT increase physical RAM — it is a much slower substitute that can cause noticeable slowdowns.</div>`
+      },
+      {
+        title: 'Data Representation Units',
+        content: `<p>Understanding storage units is essential:</p>
+<ul style="list-style:none;padding:0;font-family:var(--font-mono);font-size:0.85rem;">
+<li style="padding:5px 0;border-bottom:1px solid var(--panel-border)">1 bit = smallest unit (0 or 1)</li>
+<li style="padding:5px 0;border-bottom:1px solid var(--panel-border)">8 bits = 1 byte</li>
+<li style="padding:5px 0;border-bottom:1px solid var(--panel-border)">1,024 bytes = 1 Kilobyte (KB)</li>
+<li style="padding:5px 0;border-bottom:1px solid var(--panel-border)">1,024 KB = 1 Megabyte (MB)</li>
+<li style="padding:5px 0;border-bottom:1px solid var(--panel-border)">1,024 MB = 1 Gigabyte (GB)</li>
+<li style="padding:5px 0;border-bottom:1px solid var(--panel-border)">1,024 GB = 1 Terabyte (TB)</li>
+<li style="padding:5px 0;">1,024 TB = 1 Petabyte (PB)</li>
+</ul>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>Brilliant Kings Must Give Their People → Bit, KB, MB, GB, TB, PB</div>`
+      }
+    ],
+    expandable: [
+      { title: 'Advantages & Disadvantages: HDD vs SSD', content: '<strong>HDD Advantages:</strong> Very high capacity, cheap per GB, mature technology.<br><strong>HDD Disadvantages:</strong> Slow (mechanical), fragile (moving parts), noisy, higher power use, large and heavy.<br><br><strong>SSD Advantages:</strong> Very fast (no moving parts), silent, durable, lightweight, energy efficient.<br><strong>SSD Disadvantages:</strong> More expensive per GB, limited write cycles (flash wears out), lower max capacity at affordable prices.' },
+      { title: 'Comparison: RAM vs Virtual Memory', content: '<strong>RAM:</strong> Very fast (nanoseconds), volatile, physically inside the computer, limited size, costs more per GB.<br><strong>Virtual Memory:</strong> Much slower (milliseconds), uses storage device, can be larger, causes slowdown ("thrashing"), cheaper but at the cost of speed.' },
+      { title: 'OCR Exam Tips — Memory & Storage', content: '• ALWAYS state volatility when comparing RAM and ROM.<br>• For storage comparisons, use all four criteria: capacity, speed, portability, durability.<br>• "Flash memory" = solid-state. USB drives, SSDs, SD cards are all flash-based.<br>• Do not confuse primary storage (RAM/ROM, directly accessed by CPU) with secondary storage (HDD/SSD, not directly accessed).<br>• Cloud storage questions: mention internet dependency, security risks, and ongoing costs.' },
+      { title: 'Cloud Storage', content: 'Cloud storage stores data on remote servers accessed via the internet. Advantages: accessible anywhere, auto-backup, scalable, no physical device needed. Disadvantages: requires internet connection, privacy/security concerns, ongoing subscription cost, data ownership issues, latency.' }
+    ],
+    compareTable: {
+      headers: ['Feature', 'HDD', 'SSD', 'Optical', 'USB Flash'],
+      rows: [
+        ['Capacity', 'Very high (TBs)', 'High (TBs)', 'Low (up to 100GB)', 'Low-Medium (GBs)'],
+        ['Speed', 'Slow', 'Very fast', 'Very slow', 'Moderate'],
+        ['Cost/GB', 'Cheap', 'Expensive', 'Very cheap', 'Moderate'],
+        ['Durability', 'Low (moving parts)', 'High', 'Low (scratches)', 'High'],
+        ['Portability', 'Moderate', 'Moderate', 'High', 'Very high']
+      ]
+    },
+    flashcards: [
+      { q: 'What does RAM stand for and what is it used for?', a: 'Random Access Memory — volatile, temporary storage for currently running programs and data. Lost when power is removed.' },
+      { q: 'What does ROM stand for and what is stored there?', a: 'Read-Only Memory — non-volatile, permanent storage that holds firmware/BIOS (startup instructions). Cannot be written to in normal use.' },
+      { q: 'What is the key difference between volatile and non-volatile storage?', a: 'Volatile memory (e.g. RAM) loses data when power is removed. Non-volatile memory (e.g. ROM, SSD, HDD) retains data without power.' },
+      { q: 'List the three main types of secondary storage.', a: '1. Magnetic (HDD) — spinning platters. 2. Solid-state (SSD, USB flash) — NAND flash, no moving parts. 3. Optical (CD/DVD/Blu-ray) — laser and pits/lands.' },
+      { q: 'Give TWO advantages of SSDs over HDDs.', a: '1. Much faster read/write speeds (no mechanical movement). 2. More durable (no moving parts). 3. Silent operation. 4. Lower power consumption.' },
+      { q: 'Give TWO disadvantages of SSDs compared to HDDs.', a: '1. More expensive per GB. 2. Limited write cycles (flash memory wears out over time). 3. Generally lower maximum capacity at affordable prices.' },
+      { q: 'What is virtual memory?', a: 'A section of the hard drive/SSD used as temporary overflow when physical RAM is full. Slower than real RAM but allows more programs to run.' },
+      { q: 'Why is virtual memory slower than RAM?', a: 'Virtual memory uses secondary storage (HDD/SSD) which is much slower to access than RAM. The process of swapping data between RAM and storage (paging) causes slowdowns.' },
+      { q: 'How many bytes are in a Megabyte?', a: '1 Megabyte = 1,024 Kilobytes = 1,048,576 bytes.' },
+      { q: 'Convert: 2 GB into MB.', a: '2 GB = 2 × 1,024 MB = 2,048 MB.' },
+      { q: 'What is the correct order of storage units from smallest to largest?', a: 'Bit → Byte → KB → MB → GB → TB → PB (each 1,024× the previous).' },
+      { q: 'What type of storage does a USB flash drive use?', a: 'Solid-state flash memory (NAND flash) — no moving parts, non-volatile, portable.' },
+      { q: 'What is cache memory and why is it faster than RAM?', a: 'Cache is very fast SRAM located inside/near the CPU that stores recently/frequently used data. Faster than RAM because it uses static RAM (no refresh cycle needed) and is physically closer to the CPU.' },
+      { q: 'What is the purpose of the BIOS/UEFI stored in ROM?', a: 'BIOS/UEFI (Basic Input/Output System) is firmware that initialises hardware components when the computer starts and loads the operating system from storage into RAM.' },
+      { q: 'Give TWO advantages of optical storage.', a: '1. Very cheap media cost. 2. Highly portable. 3. Can be used for archiving/distribution. 4. Long shelf life if stored correctly.' },
+      { q: 'Give TWO disadvantages of optical storage.', a: '1. Very slow read/write speeds. 2. Susceptible to scratches/damage. 3. Low capacity compared to HDD/SSD. 4. Requires optical drive hardware.' },
+      { q: 'What is primary storage? Give TWO examples.', a: 'Primary storage is directly accessed by the CPU. Examples: RAM (working memory) and ROM (firmware/BIOS). Also includes cache and registers.' },
+      { q: 'What is secondary storage? Give TWO examples.', a: 'Secondary storage is not directly accessed by the CPU and used for long-term data storage. Examples: HDD, SSD, USB flash drive, optical disc, SD card.' },
+      { q: 'Give TWO advantages of cloud storage.', a: '1. Accessible from any device with internet. 2. Automatic backup. 3. Scalable — pay for what you use. 4. No physical device needed.' },
+      { q: 'Give TWO disadvantages of cloud storage.', a: '1. Requires reliable internet connection. 2. Privacy/security risks — data stored on third-party servers. 3. Ongoing subscription cost. 4. Data ownership concerns.' }
+    ],
+    quiz: [
+      { q: 'Which type of memory is volatile?', opts: ['ROM', 'Flash memory', 'RAM', 'Blu-ray disc'], ans: 2 },
+      { q: 'What is virtual memory?', opts: ['Extra RAM chips added to a computer', 'Part of the hard drive/SSD used as overflow when RAM is full', 'A type of solid-state storage', 'Memory located inside the CPU'], ans: 1 },
+      { q: 'Which storage device uses spinning magnetic platters?', opts: ['SSD', 'USB Flash Drive', 'HDD', 'SD Card'], ans: 2 },
+      { q: 'How many bytes are in 1 GB?', opts: ['1,000 bytes', '1,000,000 bytes', '1,024 MB worth', '1,048,576 bytes exactly = 1 MB; 1 GB = 1,024 MB'], ans: 2 },
+      { q: 'What is stored in ROM?', opts: ['Currently running programs', 'User files and documents', 'BIOS/UEFI firmware — startup instructions', 'Virtual memory page file'], ans: 2 },
+      { q: 'Which storage type is FASTEST?', opts: ['HDD', 'Optical (DVD)', 'Magnetic tape', 'SSD'], ans: 3 },
+      { q: 'What is the main DISADVANTAGE of SSDs compared to HDDs?', opts: ['SSDs are slower', 'SSDs have moving parts', 'SSDs are more expensive per GB', 'SSDs are non-volatile'], ans: 2 },
+      { q: 'Which type of storage uses pits and lands read by a laser?', opts: ['Magnetic', 'Solid-state', 'Optical', 'Flash'], ans: 2 },
+      { q: 'What does BIOS stand for?', opts: ['Binary Input/Output System', 'Basic Input/Output System', 'Base Instruction Operating System', 'Boot Initialisation Output System'], ans: 1 },
+      { q: 'A file is 4,096 KB. What is its size in MB?', opts: ['4 MB', '40 MB', '400 MB', '0.4 MB'], ans: 0 },
+      { q: 'Which characteristic describes how easy it is to transport storage?', opts: ['Capacity', 'Portability', 'Durability', 'Speed'], ans: 1 },
+      { q: 'What is the correct order from smallest to largest?', opts: ['Byte, KB, GB, MB, TB', 'KB, MB, GB, TB, PB', 'MB, KB, GB, TB', 'Bit, MB, KB, GB'], ans: 1 },
+      { q: 'Why is virtual memory slower than RAM?', opts: ['It uses ROM', 'It requires an internet connection', 'It uses secondary storage (HDD/SSD) which is much slower than RAM', 'It uses L3 cache'], ans: 2 },
+      { q: 'Which storage type has NO moving parts?', opts: ['HDD', 'Optical drive', 'SSD', 'Floppy disk'], ans: 2 },
+      { q: 'What makes RAM different from a hard drive in terms of access?', opts: ['RAM is larger', 'RAM is directly accessed by the CPU (primary); HDD is secondary storage', 'RAM uses magnetic storage', 'RAM holds data permanently'], ans: 1 }
+    ],
+    exam: [
+      { q: 'Compare RAM and ROM. Include references to volatility and purpose.', marks: 4, answer: 'RAM (Random Access Memory) is volatile — it loses all data when power is removed. It is used as primary/working storage to hold currently running programs and data being processed. ROM (Read-Only Memory) is non-volatile — it retains data permanently without power. It stores firmware such as the BIOS/UEFI, which initialises hardware on startup. RAM can be read from and written to; ROM can only be read from in normal operation.', tip: 'For 4 marks: volatility (2 marks) + purpose/use (2 marks). Always use the words "volatile" and "non-volatile".' },
+      { q: 'Explain why a computer might use virtual memory and describe one disadvantage of doing so.', marks: 3, answer: 'A computer uses virtual memory when physical RAM is full, as it allows more programs to run simultaneously by storing less-used data on the hard drive/SSD temporarily. Disadvantage: Virtual memory is much slower than RAM because secondary storage (HDD/SSD) has significantly longer access times, causing the computer to slow down noticeably (a process called "thrashing").', tip: 'State WHY it is needed first, then clearly identify the disadvantage with an explanation.' },
+      { q: 'A photographer is choosing between an HDD and an SSD for storing high-resolution images. Evaluate which is more appropriate.', marks: 4, answer: 'HDD: Advantages — very high capacity (multiple TBs) at low cost per GB, suitable for storing thousands of large image files. Disadvantage — slow transfer speeds. SSD: Advantages — much faster transfer speeds, more durable (no moving parts, important for a photographer who travels). Disadvantage — more expensive per GB, limiting total storage capacity on a budget. Conclusion: An SSD may be better for a working photographer due to speed and durability, but an HDD provides more economical bulk storage. A hybrid approach (SSD for working files, HDD for archives) is optimal.', tip: 'Evaluate means give BOTH sides and a justified conclusion.' },
+      { q: 'Give TWO differences between solid-state storage and optical storage.', marks: 4, answer: '1. Speed: Solid-state storage (SSD/USB) reads/writes much faster than optical storage (CD/DVD), which relies on a slow mechanical laser. 2. Capacity: Solid-state drives can hold much more data (TBs) compared to optical discs (typically under 50 GB for Blu-ray). 3. Durability: Solid-state is more durable as it has no moving parts; optical discs are easily scratched.', tip: 'Give exactly 2 differences with a point about each type for each difference.' },
+      { q: 'A company stores 500 MB of data. Calculate how many 700 MB CDs are needed to store all the data. Show your working.', marks: 2, answer: '500 MB ÷ 700 MB per CD = 0.714... CDs. Since a fraction of a disc counts as a whole disc, you need 1 CD. (The data fits on a single 700 MB CD with 200 MB spare.)', tip: 'Always show division calculation and round up if the data does NOT fit exactly. Read carefully — here 500 < 700 so only 1 CD is needed.' }
+    ]
+  },
+
+  {
+    id: 'networks',
+    icon: '🌐',
+    name: 'Networks, Connections & Protocols',
+    desc: 'LAN, WAN, topologies, hardware, protocols, TCP/IP, HTTP, the internet.',
+    notes: [
+      {
+        title: 'Types of Network: LAN & WAN',
+        content: `<p><span class="key-term">LAN (Local Area Network)</span> — a network covering a small geographical area (single building, school campus). Owned and managed by one organisation. Fast, reliable, cheap to maintain.</p>
+<p><span class="key-term">WAN (Wide Area Network)</span> — a network spanning a large geographical area (countries, continents). Uses third-party infrastructure (leased lines, public internet). The internet is the largest WAN.</p>
+<div class="highlight">LAN = local, one owner | WAN = wide, multiple owners/third-party infrastructure</div>
+<div class="example">EXAMPLES: LAN — school network, office network. WAN — the internet, bank network connecting branches across countries.</div>`
+      },
+      {
+        title: 'Network Topologies',
+        content: `<p>A network <span class="key-term">topology</span> describes how devices are physically or logically connected.</p>
+<p><strong>Star Topology:</strong> All devices connect to a central switch/hub. Most common in modern networks. Easy to add/remove devices. Failure of one device doesn't affect others. Hub/switch failure brings down whole network.</p>
+<p><strong>Mesh Topology:</strong> Every device connects to every other device (full mesh) or some (partial mesh). Highly resilient — multiple paths exist. Expensive, complex, lots of cabling.</p>
+<p><strong>Bus Topology:</strong> All devices share a single central cable (backbone). Simple and cheap. Collision problems, slow with heavy traffic, single point of failure (the backbone).</p>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>Star = Switch in the centre | Bus = Backbone cable | Mesh = Multiple paths</div>`
+      },
+      {
+        title: 'Network Hardware',
+        content: `<p><strong>Router</strong> — connects different networks (e.g. LAN to internet/WAN). Routes data packets between networks using IP addresses. Every home has one.</p>
+<p><strong>Switch</strong> — connects devices WITHIN a LAN. Sends data only to the intended device using MAC addresses (unlike a hub which broadcasts to all). Intelligent device.</p>
+<p><strong>Hub</strong> — older, simpler than a switch. Broadcasts data to ALL devices on the network — inefficient and insecure.</p>
+<p><strong>Wireless Access Point (WAP)</strong> — allows wireless devices to connect to a wired network via Wi-Fi.</p>
+<p><strong>Network Interface Card (NIC)</strong> — hardware in every networked device that allows network connection. Has a unique MAC address.</p>`
+      },
+      {
+        title: 'Protocols and the TCP/IP Model',
+        content: `<p>A <span class="key-term">protocol</span> is a set of rules governing how data is transmitted between devices. Without protocols, devices from different manufacturers could not communicate.</p>
+<p>The <span class="key-term">TCP/IP model</span> has four layers:</p>
+<ul style="list-style:none;padding:0;font-family:var(--font-mono);font-size:0.82rem;">
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>Application</strong> — HTTP, HTTPS, FTP, SMTP, IMAP, DNS</li>
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>Transport</strong> — TCP, UDP</li>
+<li style="padding:6px 0;border-bottom:1px solid var(--panel-border)"><strong>Internet</strong> — IP (routing packets between networks)</li>
+<li style="padding:6px 0;"><strong>Link</strong> — Ethernet, Wi-Fi (physical transmission)</li>
+</ul>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>All The Internet Links → Application, Transport, Internet, Link</div>`
+      },
+      {
+        title: 'Key Protocols',
+        content: `<p><strong>HTTP/HTTPS</strong> — HyperText Transfer Protocol (Secure). Used for web browsing. HTTPS encrypts data using SSL/TLS.</p>
+<p><strong>FTP</strong> — File Transfer Protocol. Transfers files between computers on a network.</p>
+<p><strong>SMTP</strong> — Simple Mail Transfer Protocol. Sends email messages.</p>
+<p><strong>IMAP</strong> — Internet Message Access Protocol. Retrieves emails from a mail server (emails stay on server).</p>
+<p><strong>DNS</strong> — Domain Name System. Translates domain names (google.com) into IP addresses.</p>
+<p><strong>TCP vs UDP:</strong> TCP is reliable — confirms delivery, resends lost packets. UDP is fast but unreliable — no confirmation. UDP used for streaming/gaming where speed &gt; reliability.</p>
+<div class="tip">EXAM TIP: Know the purpose of each protocol. Common question: "Which protocol would be used to…?"</div>`
+      }
+    ],
+    expandable: [
+      { title: 'Advantages & Disadvantages of Star vs Mesh Topology', content: '<strong>Star - Advantages:</strong> Easy to manage; single device failure does not affect network; easy to add devices; good performance.<br><strong>Star - Disadvantages:</strong> Central switch failure = network failure; more cabling than bus; switch cost.<br><br><strong>Mesh - Advantages:</strong> Highly resilient; multiple paths; if one link fails, data reroutes; good for critical systems.<br><strong>Mesh - Disadvantages:</strong> Very expensive; complex to set up and maintain; requires many cables/connections.' },
+      { title: 'Wired vs Wireless Networks', content: '<strong>Wired (Ethernet/Fibre):</strong> Faster, more secure, more reliable, not affected by interference. Disadvantages: inflexible (cables), expensive to install, limits mobility.<br><br><strong>Wireless (Wi-Fi):</strong> Flexible, easy to add devices, no cables needed. Disadvantages: slower than wired, security risks (anyone nearby can attempt to connect), subject to interference, signal drops with distance/walls.' },
+      { title: 'OCR Exam Tips — Networks', content: '• "Describe the role of a router" — always mention: routes packets BETWEEN networks, uses IP addresses.<br>• "Describe the role of a switch" — connects devices WITHIN a LAN, uses MAC addresses, sends data only to intended device.<br>• Topology questions often ask you to STATE a disadvantage. For star: hub/switch failure. For bus: collision/backbone failure.<br>• Know ALL protocols and their purposes. A common 1-mark question asks which protocol sends email (SMTP).' },
+      { title: 'Factors Affecting Network Performance', content: 'Bandwidth — amount of data transmitted per second (Mbps/Gbps). Higher bandwidth = more data capacity. Latency — time for data to travel from source to destination. Lower = better (important for gaming). Number of connected users — more users share bandwidth, reducing individual speed. Interference — wireless signals degraded by walls, other devices. Type of connection — fibre optic fastest, then wired ethernet, then Wi-Fi, then copper telephone line (ADSL).' }
+    ],
+    compareTable: {
+      headers: ['Feature', 'LAN', 'WAN'],
+      rows: [
+        ['Coverage', 'Small area (building/campus)', 'Large area (country/world)'],
+        ['Ownership', 'Single organisation', 'Multiple/third-party providers'],
+        ['Speed', 'Very fast', 'Slower (depends on ISP)'],
+        ['Setup cost', 'Relatively low', 'Very high'],
+        ['Example', 'School network', 'The internet']
+      ]
+    },
+    flashcards: [
+      { q: 'What does LAN stand for and what defines it?', a: 'Local Area Network — covers a small geographical area (e.g. school, office). Owned and maintained by a single organisation.' },
+      { q: 'What does WAN stand for and give an example.', a: 'Wide Area Network — covers a large geographical area. Uses third-party infrastructure. The internet is the largest WAN.' },
+      { q: 'Describe a star network topology.', a: 'All devices connect to a central switch/hub. Easy to manage, single device failure doesn\'t affect others, but switch failure brings down the whole network.' },
+      { q: 'Describe a mesh network topology.', a: 'Every device connects to every other (full mesh) or some devices (partial mesh). Very resilient with multiple paths. Expensive and complex.' },
+      { q: 'Describe a bus network topology.', a: 'All devices share a single backbone cable. Simple and cheap but prone to collisions, slow under heavy traffic, and single point of failure.' },
+      { q: 'What is the role of a router?', a: 'A router connects different networks (e.g. LAN to WAN/internet). It routes data packets between networks using IP addresses.' },
+      { q: 'What is the role of a switch?', a: 'A switch connects devices within a LAN. It uses MAC addresses to send data only to the intended device (unlike a hub which broadcasts to all).' },
+      { q: 'What does DNS do?', a: 'Domain Name System — translates human-readable domain names (e.g. google.com) into IP addresses (e.g. 142.250.187.78) so data can be routed.' },
+      { q: 'What is HTTP/HTTPS used for?', a: 'HyperText Transfer Protocol (Secure) — used for web browsing. HTTPS encrypts data using SSL/TLS for secure communication.' },
+      { q: 'What is the difference between TCP and UDP?', a: 'TCP (Transmission Control Protocol) — reliable, confirms delivery, resends lost packets. UDP (User Datagram Protocol) — fast, no delivery confirmation, used for streaming/gaming.' },
+      { q: 'What is SMTP used for?', a: 'Simple Mail Transfer Protocol — used for sending email messages from a client to a server or between servers.' },
+      { q: 'What is FTP used for?', a: 'File Transfer Protocol — used to transfer files between computers on a network. Allows uploading/downloading of files to/from a server.' },
+      { q: 'List the four layers of the TCP/IP model.', a: '1. Application (HTTP, FTP, DNS, SMTP, IMAP). 2. Transport (TCP, UDP). 3. Internet (IP). 4. Link (Ethernet, Wi-Fi).' },
+      { q: 'What is bandwidth?', a: 'The maximum amount of data that can be transmitted over a network connection per second, measured in Mbps or Gbps. Higher bandwidth = more data capacity.' },
+      { q: 'What is latency in networking?', a: 'The time taken for a data packet to travel from the source to the destination and back. Lower latency = faster, more responsive network (important for gaming).' },
+      { q: 'What is a Wireless Access Point (WAP)?', a: 'A device that allows wireless devices to connect to a wired network via Wi-Fi signals. Acts as a bridge between wired LAN and wireless devices.' },
+      { q: 'Give ONE advantage and ONE disadvantage of wireless networks.', a: 'Advantage: Flexible — devices can connect without physical cables; easy to add devices. Disadvantage: More susceptible to security attacks, interference, and slower than wired.' },
+      { q: 'What is IMAP used for?', a: 'Internet Message Access Protocol — used to retrieve emails from a mail server. Emails remain stored on the server (unlike POP3 which downloads and deletes).' },
+      { q: 'What is a MAC address?', a: 'Media Access Control address — a unique hardware identifier assigned to every Network Interface Card (NIC). Used by switches to identify devices on a LAN.' },
+      { q: 'What is a protocol?', a: 'A set of rules that govern how data is formatted, transmitted, and received between devices on a network, enabling devices from different manufacturers to communicate.' }
+    ],
+    quiz: [
+      { q: 'What does LAN stand for?', opts: ['Large Area Network', 'Local Area Network', 'Linked Area Network', 'Local Access Network'], ans: 1 },
+      { q: 'Which device routes packets between different networks using IP addresses?', opts: ['Switch', 'Hub', 'NIC', 'Router'], ans: 3 },
+      { q: 'In a star topology, what happens if the central switch fails?', opts: ['Only one device loses connection', 'The whole network goes down', 'Data is rerouted automatically', 'Nothing — devices connect directly'], ans: 1 },
+      { q: 'Which protocol is used to SEND emails?', opts: ['IMAP', 'HTTP', 'FTP', 'SMTP'], ans: 3 },
+      { q: 'What does DNS translate?', opts: ['IP addresses to MAC addresses', 'Domain names to IP addresses', 'Data packets to binary', 'HTTP to HTTPS'], ans: 1 },
+      { q: 'Which transport protocol is used for video streaming where speed is more important than reliability?', opts: ['TCP', 'HTTP', 'UDP', 'FTP'], ans: 2 },
+      { q: 'Which topology connects every device to every other device?', opts: ['Star', 'Bus', 'Ring', 'Mesh'], ans: 3 },
+      { q: 'What is the Application layer of TCP/IP responsible for?', opts: ['Physical signal transmission', 'Routing packets between networks', 'Providing protocols for user-facing services (HTTP, FTP, SMTP)', 'Breaking data into packets'], ans: 2 },
+      { q: 'What does a switch use to send data to the correct device?', opts: ['IP address', 'Domain name', 'MAC address', 'Port number'], ans: 2 },
+      { q: 'Which connection type is FASTEST?', opts: ['ADSL copper telephone line', 'Wi-Fi', 'Wired Ethernet', 'Fibre optic'], ans: 3 },
+      { q: 'What is the internet?', opts: ['A type of LAN', 'The world\'s largest WAN', 'A protocol', 'A type of router'], ans: 1 },
+      { q: 'Which layer of TCP/IP does the IP protocol operate at?', opts: ['Application', 'Transport', 'Internet', 'Link'], ans: 2 },
+      { q: 'What does bandwidth measure?', opts: ['Signal strength', 'Time for data to reach destination', 'Maximum data transmitted per second', 'Number of connected devices'], ans: 2 },
+      { q: 'What is a NIC?', opts: ['Network Interface Card — allows a device to connect to a network', 'Network Internet Controller — routes packets', 'Network Instruction Code — encryption standard', 'Network Identification Certificate'], ans: 0 },
+      { q: 'Which protocol secures web traffic using SSL/TLS encryption?', opts: ['HTTP', 'FTP', 'HTTPS', 'SMTP'], ans: 2 }
+    ],
+    exam: [
+      { q: 'Explain the difference between a LAN and a WAN.', marks: 4, answer: 'A LAN (Local Area Network) covers a small geographical area such as a school or office building. It is typically owned and managed by a single organisation and offers fast, reliable connections. A WAN (Wide Area Network) spans a large geographical area — potentially worldwide. It uses third-party infrastructure (ISPs, leased lines) and is not owned by a single entity. The internet is the largest example of a WAN. LANs generally have higher speeds and lower latency than WANs.', tip: 'Give 4 distinct points: definition (1), example (1), ownership (1), difference in speed/scale (1).' },
+      { q: 'A school is setting up a new computer lab. Compare a star topology with a mesh topology, and recommend which is more suitable.', marks: 5, answer: 'Star topology: All devices connect to a central switch. Advantage: easy to manage, adding/removing devices is simple, individual device failure doesn\'t affect others. Disadvantage: switch failure takes down the whole network. Mesh topology: All devices connect to each other. Advantage: highly resilient — multiple paths prevent total failure. Disadvantage: expensive (lots of cabling), complex to manage. Recommendation: Star topology is more suitable for a school computer lab because it is cheaper, easier to manage, and sufficient for a non-critical environment. The risk of the switch failing can be mitigated with a backup switch.', tip: 'Always reach a justified conclusion for "recommend" questions.' },
+      { q: 'Describe the role of a router and a switch in a school network.', marks: 4, answer: 'Router: Connects the school\'s LAN to the internet (WAN). Routes data packets between the internal network and external networks using IP addresses. Performs NAT (Network Address Translation) to allow multiple devices to share one public IP. Switch: Connects devices within the school\'s LAN. Uses MAC addresses to direct data frames only to the intended device (rather than broadcasting to all), making the network more efficient and secure.', tip: 'Router = between networks (IP addresses). Switch = within LAN (MAC addresses). Never confuse them.' },
+      { q: 'What is the purpose of the TCP/IP protocol stack? Name ONE protocol from the Application layer.', marks: 3, answer: 'The TCP/IP protocol stack is a set of layered protocols that govern how data is transmitted across the internet. It breaks communication into layers (Application, Transport, Internet, Link) so each layer handles a specific function, allowing interoperability between different devices and software. Application layer protocol example: HTTP (used for web browsing) / SMTP (sending email) / FTP (file transfer) / DNS (domain name resolution).', tip: 'Mention "layers", "interoperability", and name a correct Application layer protocol.' },
+      { q: 'Explain why HTTPS is preferable to HTTP for online banking.', marks: 3, answer: 'HTTPS (HyperText Transfer Protocol Secure) encrypts data using SSL/TLS before transmission, meaning sensitive information such as passwords and bank account details cannot be read if intercepted. HTTP sends data in plain text, which could be read by anyone who intercepts the packets. For online banking, where financial and personal data is transmitted, HTTPS ensures confidentiality, integrity, and authentication of the server.', tip: 'Key points: encryption, plain text vs encrypted, why it matters for banking (sensitive data).' }
+    ]
+  },
+
+  {
+    id: 'network-security',
+    icon: '🔒',
+    name: 'Network Security',
+    desc: 'Threats, attacks, malware types, prevention, encryption, firewalls and authentication.',
+    notes: [
+      {
+        title: 'Forms of Attack',
+        content: `<p>Networks face many types of attack. Understanding each is key for OCR J277:</p>
+<p><span class="key-term">Malware</span> — malicious software designed to damage, disrupt or gain unauthorised access. Umbrella term for viruses, worms, trojans, ransomware, spyware, adware.</p>
+<p><span class="key-term">Phishing</span> — fraudulent emails/messages disguised as legitimate sources to trick users into revealing credentials or clicking malicious links.</p>
+<p><span class="key-term">Brute Force Attack</span> — systematically trying every possible password combination until the correct one is found. Countered by account lockouts and strong passwords.</p>
+<p><span class="key-term">Denial of Service (DoS) / DDoS</span> — flooding a server with requests to overwhelm it and make it unavailable to legitimate users. DDoS uses multiple computers (botnet).</p>
+<p><span class="key-term">Man-in-the-Middle (MitM)</span> — attacker secretly intercepts and possibly alters communication between two parties. Countered by encryption.</p>
+<p><span class="key-term">SQL Injection</span> — malicious SQL code inserted into input fields to manipulate a database (e.g. bypassing login, stealing data).</p>`
+      },
+      {
+        title: 'Types of Malware',
+        content: `<p><strong>Virus</strong> — attaches to legitimate files, spreads when the file is shared, can corrupt/delete data.</p>
+<p><strong>Worm</strong> — self-replicating malware that spreads across networks WITHOUT needing a host file. Consumes bandwidth.</p>
+<p><strong>Trojan</strong> — appears legitimate/useful but contains malicious code. Does NOT self-replicate. Often used to create backdoors.</p>
+<p><strong>Ransomware</strong> — encrypts the victim's files and demands payment for the decryption key.</p>
+<p><strong>Spyware</strong> — secretly monitors user activity, collects personal data (keystrokes, passwords) and sends to attacker.</p>
+<p><strong>Adware</strong> — displays unwanted advertisements, often bundled with free software. May also track browsing habits.</p>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>Very Wicked Trojans Ransack Secret Agencies → Virus, Worm, Trojan, Ransomware, Spyware, Adware</div>`
+      },
+      {
+        title: 'Network Security Measures',
+        content: `<p><span class="key-term">Firewall</span> — monitors and controls incoming/outgoing network traffic based on security rules. Can be hardware or software. Acts as a barrier between trusted internal network and untrusted external networks.</p>
+<p><span class="key-term">Encryption</span> — converts data into unreadable ciphertext using a key. Only authorised parties with the decryption key can read it. Used in HTTPS, VPNs, email.</p>
+<p><span class="key-term">Anti-malware/Antivirus</span> — scans for and removes known malware. Uses signature databases and heuristic analysis.</p>
+<p><span class="key-term">User Access Levels</span> — different users given different permissions (e.g. admin vs standard user). Limits damage if account is compromised.</p>
+<p><span class="key-term">Two-Factor Authentication (2FA)</span> — requires two forms of verification (password + phone code). Significantly reduces risk even if password is stolen.</p>`
+      },
+      {
+        title: 'Passwords and Authentication',
+        content: `<p>Strong passwords are the first line of defence:</p>
+<ul style="list-style:disc;padding-left:20px;font-size:0.88rem;line-height:2;">
+<li>At least 12+ characters</li>
+<li>Mix of uppercase, lowercase, numbers, symbols</li>
+<li>Not based on personal information</li>
+<li>Unique for each service</li>
+<li>Changed regularly</li>
+</ul>
+<p><span class="key-term">Password Hashing</span> — stored passwords are converted to an irreversible hash. If a database is breached, passwords cannot be directly read.</p>
+<div class="tip">EXAM TIP: "Describe how a firewall protects a network" — state it examines incoming/outgoing packets and blocks those that don't match security rules. Mention it does NOT remove existing malware.</div>`
+      },
+      {
+        title: 'Social Engineering',
+        content: `<p><span class="key-term">Social engineering</span> exploits human psychology rather than technical vulnerabilities to gain unauthorised access.</p>
+<p><strong>Phishing</strong> — email/text impersonating a trusted source. Mass-targeted.</p>
+<p><strong>Spear Phishing</strong> — targeted phishing aimed at a specific individual using personalised information.</p>
+<p><strong>Vishing</strong> — voice/phone-based phishing. Attacker calls pretending to be tech support, bank etc.</p>
+<p><strong>Shoulder Surfing</strong> — physically observing someone entering credentials.</p>
+<p><strong>Prevention:</strong> User education and training is the MOST effective defence against social engineering.</p>`
+      }
+    ],
+    expandable: [
+      { title: 'How a Firewall Works', content: 'A firewall examines all data packets entering and leaving a network. It compares each packet against a set of rules (allow/block based on IP address, port number, protocol). Packets that match allowed rules are permitted; others are blocked. A firewall can be hardware (physical device between router and network) or software (installed on individual computers). Firewalls do NOT remove existing malware — they prevent unauthorised access.' },
+      { title: 'Symmetric vs Asymmetric Encryption', content: '<strong>Symmetric encryption:</strong> Same key used to encrypt and decrypt. Fast, but the key must be shared securely — if intercepted, all communications are compromised. Example: AES.<br><br><strong>Asymmetric encryption:</strong> Uses a pair of keys — public key (shared openly, used to encrypt) and private key (kept secret, used to decrypt). No need to share the private key. Slower but more secure for key exchange. Example: RSA. Used in HTTPS (SSL/TLS handshake uses asymmetric to exchange a symmetric key).' },
+      { title: 'DoS vs DDoS Attacks', content: '<strong>DoS (Denial of Service):</strong> A single machine floods the target server with requests, overwhelming it so legitimate users cannot access it.<br><br><strong>DDoS (Distributed DoS):</strong> Thousands/millions of compromised computers (a botnet) simultaneously flood the target. Much harder to block because traffic comes from many different IP addresses. Countermeasures include rate limiting, IP blacklisting, CDN services, and traffic analysis.' },
+      { title: 'OCR Exam Tips — Network Security', content: '• For malware questions, always name the specific type and explain its behaviour.<br>• "Explain how encryption protects data" — state that data is converted to ciphertext; only authorised parties with the key can decrypt it; intercepted data is unreadable.<br>• DoS = 1 machine; DDoS = many machines (botnet).<br>• Brute force is about TRYING ALL combinations — not guessing. Mention account lockout as a prevention.<br>• User education is always a valid answer for preventing social engineering.' }
+    ],
+    compareTable: {
+      headers: ['Attack Type', 'Method', 'Target', 'Prevention'],
+      rows: [
+        ['Phishing', 'Fake email/message', 'Credentials/data', 'User education, spam filters'],
+        ['Brute force', 'Try all passwords', 'Accounts', 'Account lockout, strong passwords'],
+        ['DoS/DDoS', 'Flood with requests', 'Servers/services', 'Rate limiting, firewalls'],
+        ['SQL injection', 'Malicious SQL input', 'Databases', 'Input validation, parameterised queries'],
+        ['MitM', 'Intercept communication', 'Data in transit', 'Encryption (HTTPS)'],
+        ['Malware', 'Malicious software', 'Systems/data', 'Antivirus, firewalls, updates']
+      ]
+    },
+    flashcards: [
+      { q: 'What is malware?', a: 'Malicious software designed to damage, disrupt, or gain unauthorised access to a computer system. Umbrella term for viruses, worms, trojans, ransomware, spyware, adware.' },
+      { q: 'What is a virus?', a: 'Malware that attaches itself to legitimate program files and spreads when infected files are shared. Can corrupt, delete or encrypt data.' },
+      { q: 'How does a worm differ from a virus?', a: 'A worm self-replicates and spreads across networks WITHOUT needing a host file. A virus requires a host file to attach to. Worms can spread via email or network connections automatically.' },
+      { q: 'What is a Trojan horse in cybersecurity?', a: 'Malware disguised as legitimate software. Tricks users into installing it. Does NOT self-replicate. Often creates backdoors for attackers or delivers other malware.' },
+      { q: 'What is ransomware?', a: 'Malware that encrypts the victim\'s files, making them inaccessible. The attacker demands a ransom (usually cryptocurrency) in exchange for the decryption key.' },
+      { q: 'What is phishing?', a: 'A social engineering attack using fraudulent emails/messages disguised as legitimate sources to trick users into revealing passwords, financial info, or clicking malicious links.' },
+      { q: 'What is a brute force attack?', a: 'An attack that systematically tries every possible password combination until the correct one is found. Can be prevented by account lockouts and strong passwords.' },
+      { q: 'What is a DoS attack?', a: 'Denial of Service — flooding a server with so many requests that it becomes overwhelmed and unavailable to legitimate users. Carried out by a single machine.' },
+      { q: 'How does a DDoS attack differ from DoS?', a: 'Distributed DoS uses a botnet — thousands of compromised computers — to simultaneously flood a target, making it much harder to block as traffic comes from many IP addresses.' },
+      { q: 'What is a Man-in-the-Middle (MitM) attack?', a: 'An attacker secretly intercepts and possibly alters communication between two parties without their knowledge. Prevented by end-to-end encryption (HTTPS).' },
+      { q: 'What is SQL injection?', a: 'An attack where malicious SQL code is inserted into input fields (e.g. login forms) to manipulate a database — bypassing authentication or extracting data.' },
+      { q: 'How does a firewall protect a network?', a: 'A firewall examines incoming and outgoing data packets and blocks those that do not match the defined security rules (based on IP, port, protocol). It prevents unauthorised access.' },
+      { q: 'What is encryption and why is it important?', a: 'Encryption converts readable data (plaintext) into unreadable ciphertext using a key. Only authorised parties with the correct decryption key can read it. Protects data from interception.' },
+      { q: 'What is Two-Factor Authentication (2FA)?', a: 'An authentication method requiring two forms of verification — typically something you know (password) and something you have (phone code/token). Significantly reduces account compromise risk.' },
+      { q: 'What is spyware?', a: 'Malware that secretly monitors user activity (keystrokes, passwords, browsing) and sends collected data to an attacker, often without the user\'s knowledge.' },
+      { q: 'What is user access control and why is it used?', a: 'Assigning different permissions to different users (e.g. admin vs standard user). Limits the damage if an account is compromised — standard users cannot install software or access sensitive files.' },
+      { q: 'What makes a strong password?', a: '12+ characters, mix of uppercase, lowercase, numbers and symbols, not based on personal info, unique for each service, changed regularly. Use a password manager.' },
+      { q: 'What is social engineering?', a: 'Exploiting human psychology rather than technical vulnerabilities to gain unauthorised access — e.g. phishing, vishing, shoulder surfing. Best countered by user education.' },
+      { q: 'What is the difference between symmetric and asymmetric encryption?', a: 'Symmetric: same key for encryption and decryption — fast but key must be shared securely. Asymmetric: public key encrypts, private key decrypts — more secure for key exchange, used in HTTPS.' },
+      { q: 'What is password hashing?', a: 'Converting a password into an irreversible fixed-length hash before storing it. If the database is breached, passwords cannot be read directly. Examples: SHA-256, bcrypt.' }
+    ],
+    quiz: [
+      { q: 'Which type of malware self-replicates and spreads across networks without needing a host file?', opts: ['Virus', 'Trojan', 'Worm', 'Adware'], ans: 2 },
+      { q: 'What type of attack floods a server with requests from a single machine?', opts: ['DDoS', 'Phishing', 'DoS', 'Brute force'], ans: 2 },
+      { q: 'Which security measure examines packets and blocks unauthorised traffic?', opts: ['Antivirus', 'Encryption', 'Firewall', '2FA'], ans: 2 },
+      { q: 'What is ransomware?', opts: ['Malware that displays adverts', 'Malware that encrypts files and demands payment', 'Malware that steals passwords', 'Malware attached to host files'], ans: 1 },
+      { q: 'A user receives an email claiming to be from their bank, asking them to verify login details. What type of attack is this?', opts: ['Brute force', 'SQL injection', 'Phishing', 'MitM'], ans: 2 },
+      { q: 'Which encryption type uses a public and private key pair?', opts: ['Symmetric', 'Hashing', 'Asymmetric', 'AES'], ans: 2 },
+      { q: 'What does 2FA stand for?', opts: ['Two-Frequency Authentication', 'Two-Factor Authentication', 'Two-Form Access', 'Trusted Firewall Access'], ans: 1 },
+      { q: 'SQL injection attacks target which component?', opts: ['RAM', 'The CPU', 'The network topology', 'Databases'], ans: 3 },
+      { q: 'Which malware type disguises itself as legitimate software but does NOT self-replicate?', opts: ['Worm', 'Virus', 'Trojan', 'Ransomware'], ans: 2 },
+      { q: 'What is the MOST effective defence against social engineering attacks?', opts: ['Stronger passwords', 'User education and training', 'Firewalls', 'Anti-malware software'], ans: 1 },
+      { q: 'What does a Man-in-the-Middle attack do?', opts: ['Floods server with requests', 'Intercepts and possibly alters communications between two parties', 'Tries all password combinations', 'Installs malware via email'], ans: 1 },
+      { q: 'Which measure prevents brute force attacks?', opts: ['User education', 'Encryption', 'Account lockout after failed attempts', 'Firewall rules'], ans: 2 },
+      { q: 'A DDoS attack uses:', opts: ['A single powerful computer', 'A botnet of many compromised computers', 'SQL code in input fields', 'A fake login page'], ans: 1 },
+      { q: 'What does password hashing do?', opts: ['Encrypts passwords so they can be decrypted later', 'Converts passwords into an irreversible fixed-length string for secure storage', 'Sends passwords over HTTPS', 'Generates random passwords'], ans: 1 },
+      { q: 'Spyware is designed to:', opts: ['Delete system files', 'Encrypt user data', 'Display pop-up adverts', 'Secretly monitor and collect user data'], ans: 3 }
+    ],
+    exam: [
+      { q: 'Describe TWO different types of malware and explain how each causes harm.', marks: 4, answer: '1. Ransomware: Encrypts the victim\'s files, making all data inaccessible. The attacker demands a ransom payment in exchange for the decryption key. Harm: loss of access to data, financial cost, business disruption. 2. Spyware: Secretly monitors user activity, capturing keystrokes and passwords, sending data to the attacker. Harm: identity theft, financial fraud, privacy violation.', tip: 'For 4 marks: name each type (1 mark) + explain how it causes harm (1 mark each) — 2 marks per malware.' },
+      { q: 'Explain how a firewall protects a network. State ONE limitation.', marks: 3, answer: 'A firewall monitors all incoming and outgoing network traffic and applies security rules to determine which packets to allow or block. It filters based on criteria such as IP address, port number, and protocol, preventing unauthorised external access to the internal network. Limitation: A firewall cannot protect against threats that originate from within the network (e.g. a malicious insider or already-installed malware) and cannot remove existing malware.', tip: 'State what a firewall does (filters packets) + how (rules/criteria) + name a real limitation.' },
+      { q: 'Explain how encryption protects data transmitted over the internet.', marks: 3, answer: 'Encryption converts plaintext data into ciphertext using an encryption key, making it unreadable to anyone who intercepts it during transmission. Only the authorised recipient with the correct decryption key can convert the ciphertext back to readable plaintext. For example, HTTPS uses SSL/TLS encryption so that even if packets are intercepted by a Man-in-the-Middle attacker, the data cannot be understood.', tip: 'Key terms: plaintext → ciphertext → decryption key. Link to a real example like HTTPS.' },
+      { q: 'A company is concerned about brute force attacks on employee accounts. Suggest THREE measures they could implement.', marks: 3, answer: '1. Account lockout: After a set number of failed login attempts (e.g. 5), the account is locked, preventing further guesses. 2. Strong password policy: Require passwords of 12+ characters with mixed character types, making the number of combinations astronomically large. 3. Two-Factor Authentication (2FA): Even if a password is guessed, the attacker cannot log in without the second factor (e.g. phone verification code).', tip: 'Three distinct measures, each clearly named. Don\'t repeat the same idea twice.' },
+      { q: 'Compare symmetric and asymmetric encryption. State which is used in HTTPS and why.', marks: 4, answer: 'Symmetric encryption uses the same key to encrypt and decrypt data. It is fast and efficient but requires the key to be shared securely between parties — if intercepted during sharing, all communications are compromised. Asymmetric encryption uses a public/private key pair — data encrypted with the public key can only be decrypted with the private key. More secure for key exchange but computationally slower. HTTPS uses asymmetric encryption during the TLS handshake to securely exchange a symmetric session key, then uses symmetric encryption for the actual data transfer (combining security and speed).', tip: 'Explain both types, state the key difference, then give the HTTPS answer — asymmetric for handshake, then symmetric for data.' }
+    ]
+  },
+
+  {
+    id: 'systems-software',
+    icon: '⚙️',
+    name: 'Systems Software',
+    desc: 'Operating systems, utility software, drivers, memory management, file systems.',
+    notes: [
+      {
+        title: 'Operating Systems — Purpose & Functions',
+        content: `<p>An <span class="key-term">Operating System (OS)</span> is system software that manages computer hardware and provides services for application programs. Without an OS, users cannot interact with the hardware.</p>
+<p><strong>Key functions of an OS:</strong></p>
+<ul style="list-style:disc;padding-left:20px;font-size:0.88rem;line-height:2;">
+<li>Memory management — allocates RAM to processes, uses virtual memory</li>
+<li>Process management — schedules CPU time between processes, handles multitasking</li>
+<li>File management — organises files in a hierarchical structure, controls access permissions</li>
+<li>Device management — communicates with hardware via device drivers</li>
+<li>User interface — provides GUI (Graphical User Interface) or CLI (Command Line Interface)</li>
+<li>Security — manages user accounts, authentication, access control</li>
+</ul>
+<div class="example">EXAMPLES of OS: Windows, macOS, Linux, Android, iOS, Chrome OS.</div>`
+      },
+      {
+        title: 'Memory Management',
+        content: `<p>The OS is responsible for allocating <span class="key-term">memory (RAM)</span> to programs:</p>
+<p><strong>Multitasking</strong> — the OS allows multiple programs to appear to run simultaneously by rapidly switching the CPU between processes.</p>
+<p><strong>Memory allocation</strong> — the OS assigns different areas of RAM to different processes, keeping them separated to prevent conflicts.</p>
+<p><strong>Virtual memory</strong> — when RAM is full, the OS uses part of the hard drive/SSD as overflow (much slower than RAM).</p>
+<p><strong>Paging</strong> — memory is divided into fixed-size blocks (pages). Programs divided into same-size pages stored in available RAM frames. Reduces fragmentation.</p>
+<div class="tip">EXAM TIP: Always connect memory management to WHY it is needed — multiple programs need to run without interfering with each other.</div>`
+      },
+      {
+        title: 'Utility Software',
+        content: `<p><span class="key-term">Utility software</span> performs maintenance tasks to keep the system running efficiently and securely.</p>
+<p><strong>Disk Defragmenter</strong> — reorganises fragmented files on an HDD so data is stored contiguously, improving read speed. NOT needed for SSDs (no mechanical head movement).</p>
+<p><strong>Compression Software</strong> — reduces file sizes by encoding data more efficiently (lossless: ZIP; lossy: MP3/JPEG). Saves storage space and speeds up transfer.</p>
+<p><strong>Antivirus/Anti-malware</strong> — scans for and removes malicious software. Uses signature databases and heuristic analysis.</p>
+<p><strong>Backup Software</strong> — creates copies of data to prevent loss from hardware failure, malware, or accidents.</p>
+<p><strong>Disk Cleanup</strong> — removes temporary files, old downloads, and cached data to free up storage space.</p>
+<div class="memory-aid"><div class="memory-aid-label">MEMORY AID</div>Defrag, Compress, Anti-virus, Backup, Clean → "Don't Confuse All Busy Computers"</div>`
+      },
+      {
+        title: 'Device Drivers',
+        content: `<p>A <span class="key-term">device driver</span> is software that allows the OS to communicate with specific hardware devices.</p>
+<p>Every hardware device (printer, graphics card, keyboard, mouse, webcam) requires a driver. Without the correct driver, the OS cannot control the device.</p>
+<div class="example">EXAMPLE: When you plug in a new printer, Windows searches for and installs the appropriate driver. Without it, the OS cannot send print commands to the printer.</div>
+<p><strong>Why drivers are needed:</strong> Hardware manufacturers design different devices with different communication protocols. Drivers act as translators between the standardised OS commands and the specific hardware language.</p>`
+      },
+      {
+        title: 'GUI vs CLI',
+        content: `<p><span class="key-term">GUI (Graphical User Interface)</span> — uses icons, windows, menus, and a pointer device. Intuitive and user-friendly for non-technical users. Requires more memory and processing power.</p>
+<p><span class="key-term">CLI (Command Line Interface)</span> — text-based input of commands. Requires expertise but more precise, faster, less memory intensive. Preferred by system administrators.</p>
+<div class="highlight">GUI advantages: Easy to learn, WYSIWYG, no memorisation needed. CLI advantages: Faster for experts, less resource-intensive, scriptable (automation), greater control.</div>
+<div class="tip">EXAM TIP: When asked to "compare" GUI and CLI, address: ease of use, resource requirements, target users, and level of control.</div>`
+      }
+    ],
+    expandable: [
+      { title: 'What is Fragmentation and Why Defragment?', content: 'When files are saved on an HDD, they may be split across non-contiguous sectors (fragmented). The read head must move to multiple locations to read a single file, slowing performance. Defragmentation reorganises files so each is stored in consecutive sectors, reducing head movement and improving speed. IMPORTANT: SSDs do NOT need defragmentation because they have no moving parts — defragmenting an SSD would unnecessarily wear out the flash memory write cycles.' },
+      { title: 'Lossy vs Lossless Compression', content: '<strong>Lossy compression:</strong> Permanently removes some data to achieve smaller file sizes. Quality is reduced but files are much smaller. Examples: JPEG (images), MP3 (audio), MP4 (video). Cannot be restored to original.<br><br><strong>Lossless compression:</strong> Reduces file size without losing any data — original file can be perfectly restored. Examples: PNG (images), FLAC (audio), ZIP (any file type). Used when quality/accuracy is critical.' },
+      { title: 'OCR Exam Tips — Systems Software', content: '• OS function questions: name the function AND explain what it does (e.g. "Memory management — allocates RAM to different processes to prevent conflicts").<br>• Defragmentation: only useful for HDDs. Always state WHY it improves performance (contiguous storage = less head movement).<br>• GUI vs CLI: use target audience as a differentiator.<br>• For "utility software" questions, give a specific example (not just "it maintains the system").<br>• Multitasking questions: the CPU rapidly switches between processes — it is not truly simultaneous on a single core.' },
+      { title: 'Types of Operating System', content: '<strong>Multi-user:</strong> Multiple users use the system simultaneously (e.g. mainframe, server OS).<br><strong>Multi-tasking:</strong> Runs multiple programs concurrently by switching CPU time.<br><strong>Real-time OS:</strong> Responds to inputs immediately with guaranteed timing — used in safety-critical systems (aircraft, pacemakers, industrial control).<br><strong>Embedded OS:</strong> Lightweight OS for embedded systems (e.g. washing machine controller, sat nav).<br><strong>Distributed OS:</strong> Manages a network of computers as a single system.' }
+    ],
+    compareTable: {
+      headers: ['Feature', 'GUI', 'CLI'],
+      rows: [
+        ['Ease of use', 'Easy — intuitive icons/menus', 'Difficult — must memorise commands'],
+        ['Resource use', 'Higher (graphics, RAM)', 'Very low'],
+        ['Speed', 'Slower for expert tasks', 'Faster for expert users'],
+        ['User type', 'General public', 'Technical users/admin'],
+        ['Automation', 'Limited', 'Easily scriptable'],
+        ['Control', 'Limited options', 'Greater precision/control']
+      ]
+    },
+    flashcards: [
+      { q: 'What is an Operating System (OS)?', a: 'System software that manages computer hardware and provides services for application programs. Acts as an interface between user/software and hardware.' },
+      { q: 'List FOUR functions of an Operating System.', a: '1. Memory management. 2. Process/CPU management. 3. File management. 4. Device management (via drivers). 5. User interface (GUI/CLI). 6. Security (authentication, access control).' },
+      { q: 'What is memory management in the context of an OS?', a: 'The OS allocates RAM to different running processes, keeps them separated to prevent conflicts, manages virtual memory when RAM is full, and uses paging to efficiently use available memory.' },
+      { q: 'What is multitasking?', a: 'The ability of an OS to allow multiple programs to appear to run simultaneously by rapidly switching CPU time between processes (context switching). On a single core, only one runs at any instant.' },
+      { q: 'What is a device driver?', a: 'Software that allows the OS to communicate with a specific hardware device. Acts as a translator between standardised OS commands and device-specific hardware language.' },
+      { q: 'What is utility software?', a: 'System software that performs specific maintenance tasks to keep the computer running efficiently and securely. Examples: disk defragmenter, compression software, antivirus, backup tools.' },
+      { q: 'What does disk defragmentation do and why is it needed for HDDs?', a: 'Defragmentation reorganises files on an HDD into contiguous blocks, so the read head doesn\'t need to move to multiple locations. Improves read speed. NOT needed for SSDs (no mechanical head).' },
+      { q: 'Why is disk defragmentation NOT recommended for SSDs?', a: 'SSDs have no moving parts — there is no speed benefit from contiguous storage. Defragmenting would unnecessarily use write cycles, wearing out the flash memory faster.' },
+      { q: 'What is compression software and give an example of lossy and lossless.', a: 'Software that reduces file sizes. Lossy: permanently removes data (JPEG, MP3) — smaller files, lower quality. Lossless: reduces size without losing data (ZIP, PNG) — original can be restored.' },
+      { q: 'What is the difference between a GUI and a CLI?', a: 'GUI (Graphical User Interface): icons, windows, menus — user-friendly, requires more resources. CLI (Command Line Interface): text commands — requires expertise, faster for experts, less resource-intensive.' },
+      { q: 'Give TWO advantages of a GUI over a CLI.', a: '1. Easier to use — intuitive, no commands to memorise. 2. Visual feedback — WYSIWYG. 3. Accessible to non-technical users. 4. Point-and-click interaction.' },
+      { q: 'Give TWO advantages of a CLI over a GUI.', a: '1. Faster for expert users. 2. Less memory and processing resources required. 3. Scriptable — commands can be automated. 4. Greater precision and control.' },
+      { q: 'What is paging in memory management?', a: 'Dividing both RAM and programs into equal fixed-size blocks (pages/frames). Allows programs to be stored in non-contiguous RAM locations without fragmentation issues. Used in virtual memory.' },
+      { q: 'What is a real-time operating system?', a: 'An OS that processes inputs and responds within a guaranteed time limit. Used in safety-critical systems (aircraft control, pacemakers, industrial automation) where delays are unacceptable.' },
+      { q: 'What does antivirus utility software do?', a: 'Scans files and memory for known malware patterns (signatures) and suspicious behaviour (heuristic analysis). Removes or quarantines detected threats. Updates its signature database regularly.' },
+      { q: 'What is backup software?', a: 'Utility software that creates copies of data at regular intervals to external storage or cloud. Protects against data loss from hardware failure, malware (ransomware), accidental deletion.' },
+      { q: 'Give TWO examples of operating systems.', a: 'Windows, macOS, Linux, Android, iOS, Chrome OS. (Any two valid ones for the mark.)' },
+      { q: 'What is the purpose of file management in an OS?', a: 'The OS organises files in a hierarchical directory structure, controls read/write/execute permissions for different users, and manages creating, deleting, moving, and renaming files.' },
+      { q: 'What is lossy compression? Give an example.', a: 'Compression that permanently removes some data to reduce file size. Quality is reduced but cannot be restored. Examples: JPEG images, MP3 audio, MP4 video.' },
+      { q: 'What is lossless compression? Give an example.', a: 'Compression that reduces file size without losing any data — the original file can be perfectly restored. Examples: ZIP archives, PNG images, FLAC audio.' }
+    ],
+    quiz: [
+      { q: 'What is the main purpose of an Operating System?', opts: ['Run web browsers', 'Manage hardware and provide services to application software', 'Provide antivirus protection', 'Connect to the internet'], ans: 1 },
+      { q: 'Which utility software reorganises files on an HDD to improve performance?', opts: ['Antivirus', 'Disk defragmenter', 'Backup software', 'Compression software'], ans: 1 },
+      { q: 'Why should you NOT defragment an SSD?', opts: ['It is too slow', 'SSDs don\'t support defragmentation', 'It would unnecessarily wear out flash memory write cycles with no performance benefit', 'SSDs are already fragmented by design'], ans: 2 },
+      { q: 'What does a device driver do?', opts: ['Provides internet access', 'Allows the OS to communicate with specific hardware devices', 'Encrypts user files', 'Manages user accounts'], ans: 1 },
+      { q: 'Which type of compression permanently removes data?', opts: ['Lossless', 'Zip compression', 'Lossy', 'Huffman encoding'], ans: 2 },
+      { q: 'What is the difference between GUI and CLI?', opts: ['GUI uses text commands; CLI uses icons', 'GUI uses icons/menus; CLI uses text commands', 'GUI is for servers; CLI is for home users', 'GUI requires less memory than CLI'], ans: 1 },
+      { q: 'Which OS function allows multiple programs to appear to run simultaneously?', opts: ['File management', 'Device management', 'Multitasking', 'Memory paging'], ans: 2 },
+      { q: 'Which is an example of lossless compression?', opts: ['JPEG', 'MP3', 'ZIP', 'MP4'], ans: 2 },
+      { q: 'What is virtual memory?', opts: ['A fast type of cache memory', 'Part of the hard drive used as overflow when RAM is full', 'Memory built into the CPU', 'Compressed RAM'], ans: 1 },
+      { q: 'What type of OS is used in aircraft control systems where timing is critical?', opts: ['Multi-user OS', 'Embedded OS', 'Real-time OS', 'Distributed OS'], ans: 2 },
+      { q: 'Which is an example of utility software?', opts: ['Microsoft Word', 'Google Chrome', 'Disk Cleanup', 'Adobe Photoshop'], ans: 2 },
+      { q: 'A GUI requires MORE resources than a CLI. Which resource is most affected?', opts: ['CPU speed', 'RAM and processing power', 'Hard drive space', 'Network bandwidth'], ans: 1 },
+      { q: 'What does file management in an OS include?', opts: ['Running application programs', 'Organising files in directories and controlling access permissions', 'Connecting to the internet', 'Updating the BIOS'], ans: 1 },
+      { q: 'Which compression format is lossless for images?', opts: ['JPEG', 'MP3', 'MP4', 'PNG'], ans: 3 },
+      { q: 'What is paging in memory management?', opts: ['Scrolling through web pages', 'Dividing RAM and programs into equal fixed-size blocks for efficient allocation', 'Moving data from CPU to cache', 'Formatting the hard drive'], ans: 1 }
+    ],
+    exam: [
+      { q: 'Describe FOUR functions of an Operating System.', marks: 4, answer: '1. Memory management: allocates RAM to processes and manages virtual memory when RAM is full. 2. Process management: schedules CPU time between processes, enabling multitasking. 3. File management: organises files in a hierarchical structure and controls user access permissions. 4. Device management: uses device drivers to communicate with hardware peripherals (keyboard, printer, etc.).', tip: 'For 4 marks, give 4 distinct functions. Each must include what the function IS and what it DOES.' },
+      { q: 'Explain why defragmentation improves performance on a HDD but is not needed on a SSD.', marks: 4, answer: 'On an HDD, files can become fragmented — stored in non-contiguous sectors across the disk. The mechanical read head must physically move to multiple locations to read a single file, increasing access time. Defragmentation reorganises files into consecutive sectors, reducing head movement and improving read speed. On an SSD, there are no moving parts — data is accessed electronically and any location is accessed in the same time. Defragmenting an SSD provides no speed benefit and would unnecessarily use write cycles, shortening the SSD\'s lifespan.', tip: '2 marks for HDD explanation (why it helps), 2 marks for SSD explanation (why it doesn\'t help + potential harm).' },
+      { q: 'Compare lossy and lossless compression. Give an example of each.', marks: 4, answer: 'Lossy compression permanently removes some data, resulting in a smaller file size at the cost of reduced quality. The original file cannot be restored. Example: JPEG (images), MP3 (audio). Suitable where some quality loss is acceptable. Lossless compression reduces file size without losing any data — the original file can be perfectly reconstructed. Example: ZIP (files), PNG (images). Used when data accuracy is critical, such as text documents or software.', tip: '2 marks lossy (definition + example), 2 marks lossless (definition + example). Always state that lossy CANNOT be reversed.' },
+      { q: 'A school is installing new printers. Explain why device drivers are necessary.', marks: 3, answer: 'A device driver is software that allows the OS to communicate with a specific hardware device. Different printers use different hardware protocols and command sets. The driver acts as a translator between the standardised commands of the OS and the specific language the printer hardware understands. Without the correct driver, the OS cannot send print instructions to the printer, making it non-functional even if physically connected.', tip: 'Define driver, explain WHY different devices need different drivers (different protocols), and state the consequence of missing a driver.' },
+      { q: 'A company is considering switching from a GUI to a CLI for its server management. Evaluate this decision.', marks: 5, answer: 'Advantages of switching to CLI: Requires fewer system resources (RAM/processing), making servers more efficient. Faster for expert users who know commands. Highly scriptable — repetitive tasks can be automated with scripts, saving time. Greater control and precision over system operations. Disadvantages: Requires technical expertise — all staff would need training. Steeper learning curve increases risk of errors. Less intuitive than GUI. Conclusion: For server management by IT professionals, CLI is often preferable as servers benefit from lower resource usage, scripting capabilities, and expert control. However, training costs and expertise availability must be considered.', tip: 'Balanced evaluation: give CLI advantages, GUI advantages, then a justified conclusion relevant to the context (server management by professionals).' }
+    ]
+  }
+];
+
+/* ============================================================
+   GLOSSARY DATA
+   ============================================================ */
+const GLOSSARY = [
+  { term: 'ALU', def: 'Arithmetic Logic Unit — the part of the CPU that performs arithmetic calculations (+, −, ×, ÷) and logical operations (AND, OR, NOT, comparisons).' },
+  { term: 'Antivirus', def: 'Utility software that scans for and removes malicious software using signature databases and heuristic analysis.' },
+  { term: 'Asymmetric encryption', def: 'Encryption using a public/private key pair. Public key encrypts; private key decrypts. Used in HTTPS/TLS handshake.' },
+  { term: 'Bandwidth', def: 'The maximum amount of data that can be transmitted over a network per second, measured in Mbps or Gbps.' },
+  { term: 'BIOS', def: 'Basic Input/Output System — firmware stored in ROM that initialises hardware and loads the OS when a computer starts.' },
+  { term: 'Botnet', def: 'A network of compromised computers controlled by an attacker, used to conduct DDoS attacks or send spam.' },
+  { term: 'Brute force attack', def: 'A cyberattack that systematically tries every possible password combination until the correct one is found.' },
+  { term: 'Bus', def: 'A set of electrical conductors that transfers data between components. Types: data bus, address bus, control bus.' },
+  { term: 'Bus topology', def: 'A network layout where all devices share a single central backbone cable.' },
+  { term: 'Cache', def: 'Very fast SRAM memory inside/near the CPU that stores frequently used instructions and data to reduce slow RAM access.' },
+  { term: 'CIR', def: 'Current Instruction Register — holds the instruction currently being decoded and executed by the CPU.' },
+  { term: 'CLI', def: 'Command Line Interface — a text-based user interface where users type commands. Requires expertise but is resource-efficient.' },
+  { term: 'Clock speed', def: 'The number of FDE cycles a CPU can perform per second, measured in GHz. Higher = faster processing.' },
+  { term: 'Cloud storage', def: 'Data stored on remote servers accessed via the internet. Accessible from anywhere; requires internet connection.' },
+  { term: 'Compression', def: 'Reducing file size by encoding data more efficiently. Lossy (removes data) or lossless (no data lost).' },
+  { term: 'Control Unit', def: 'Part of the CPU that fetches, decodes, and controls execution of instructions. Sends control signals to other components.' },
+  { term: 'CPU', def: 'Central Processing Unit — the main processor that fetches, decodes, and executes program instructions.' },
+  { term: 'DDoS', def: 'Distributed Denial of Service — overwhelming a server with requests from a botnet of many computers, making it unavailable.' },
+  { term: 'Defragmentation', def: 'Utility software that reorganises fragmented files on an HDD into contiguous blocks, improving read speed.' },
+  { term: 'Device driver', def: 'Software that allows the OS to communicate with specific hardware devices by acting as a translator.' },
+  { term: 'DNS', def: 'Domain Name System — translates human-readable domain names (google.com) into IP addresses.' },
+  { term: 'DoS', def: 'Denial of Service — flooding a server with requests from a single machine to make it unavailable to legitimate users.' },
+  { term: 'Embedded system', def: 'A computer system with a dedicated function built into a larger device — e.g. washing machine controller, pacemaker.' },
+  { term: 'Encryption', def: 'Converting readable data (plaintext) into unreadable ciphertext using a key, so only authorised parties can read it.' },
+  { term: 'FDE cycle', def: 'Fetch-Decode-Execute — the continuous process by which the CPU processes instructions: fetch from memory, decode, then execute.' },
+  { term: 'Firewall', def: 'Security system that monitors and controls network traffic based on rules, blocking unauthorised access.' },
+  { term: 'FTP', def: 'File Transfer Protocol — used to transfer files between computers on a network.' },
+  { term: 'Fragmentation', def: 'When files are stored in non-contiguous sectors on an HDD, causing slower access times due to increased head movement.' },
+  { term: 'GUI', def: 'Graphical User Interface — uses icons, windows, and menus; user-friendly but requires more resources than CLI.' },
+  { term: 'Harvard architecture', def: 'CPU design with separate memory for instructions and data, allowing simultaneous access. Used in microcontrollers.' },
+  { term: 'HDD', def: 'Hard Disk Drive — magnetic secondary storage using spinning platters. High capacity, cheap, but slow and fragile.' },
+  { term: 'HTTP', def: 'HyperText Transfer Protocol — used for web browsing. Data sent in plaintext.' },
+  { term: 'HTTPS', def: 'HyperText Transfer Protocol Secure — HTTP with SSL/TLS encryption for secure web communication.' },
+  { term: 'Hub', def: 'A basic network device that broadcasts data to ALL connected devices. Less efficient and secure than a switch.' },
+  { term: 'IMAP', def: 'Internet Message Access Protocol — retrieves emails from a server while keeping them stored on the server.' },
+  { term: 'IP address', def: 'Internet Protocol address — a unique numerical label assigned to every device on a network for routing purposes.' },
+  { term: 'LAN', def: 'Local Area Network — a network covering a small geographical area, owned and managed by one organisation.' },
+  { term: 'Latency', def: 'The time taken for data to travel from source to destination. Lower latency = more responsive network.' },
+  { term: 'Lossless compression', def: 'Compression that reduces file size without losing any data. Original can be perfectly restored. Examples: ZIP, PNG.' },
+  { term: 'Lossy compression', def: 'Compression that permanently removes data to reduce file size. Quality is reduced. Examples: JPEG, MP3.' },
+  { term: 'MAC address', def: 'Media Access Control address — a unique hardware identifier for every NIC, used by switches to identify devices on a LAN.' },
+  { term: 'Malware', def: 'Malicious software designed to damage, disrupt, or gain unauthorised access. Includes viruses, worms, trojans, ransomware.' },
+  { term: 'MAR', def: 'Memory Address Register — holds the address of the memory location currently being read from or written to.' },
+  { term: 'MDR', def: 'Memory Data Register — holds the data fetched from memory or to be written to memory.' },
+  { term: 'Mesh topology', def: 'Network layout where every device connects to every other. Highly resilient but expensive and complex.' },
+  { term: 'MitM attack', def: 'Man-in-the-Middle attack — an attacker secretly intercepts communications between two parties.' },
+  { term: 'Multitasking', def: 'OS feature allowing multiple programs to appear to run simultaneously by rapidly switching CPU time between processes.' },
+  { term: 'NIC', def: 'Network Interface Card — hardware in every networked device that allows it to connect to a network. Has a unique MAC address.' },
+  { term: 'Operating System', def: 'System software that manages hardware and provides services for application programs (e.g. Windows, Linux, iOS).' },
+  { term: 'Paging', def: 'Dividing memory and programs into fixed-size blocks (pages) for efficient allocation and virtual memory management.' },
+  { term: 'PC (register)', def: 'Program Counter — a CPU register that holds the memory address of the next instruction to be fetched.' },
+  { term: 'Phishing', def: 'Social engineering attack using fake emails/messages to trick users into revealing credentials or clicking malicious links.' },
+  { term: 'Protocol', def: 'A set of rules governing how data is formatted, transmitted, and received between devices on a network.' },
+  { term: 'RAM', def: 'Random Access Memory — volatile primary storage for currently running programs. Data is lost when power is removed.' },
+  { term: 'Ransomware', def: 'Malware that encrypts victim\'s files and demands payment for the decryption key.' },
+  { term: 'ROM', def: 'Read-Only Memory — non-volatile storage holding firmware (BIOS). Cannot be modified in normal operation.' },
+  { term: 'Router', def: 'Network device that connects different networks, routing data packets using IP addresses.' },
+  { term: 'SMTP', def: 'Simple Mail Transfer Protocol — used to send email messages from a client or between mail servers.' },
+  { term: 'Social engineering', def: 'Exploiting human psychology to gain unauthorised access — e.g. phishing, vishing, shoulder surfing.' },
+  { term: 'Spyware', def: 'Malware that secretly monitors user activity and sends collected data (passwords, keystrokes) to an attacker.' },
+  { term: 'SQL injection', def: 'Inserting malicious SQL code into input fields to manipulate a database — bypassing logins or extracting data.' },
+  { term: 'SSD', def: 'Solid-State Drive — non-volatile storage using NAND flash memory. Fast, durable, silent, but expensive per GB.' },
+  { term: 'Star topology', def: 'Network layout where all devices connect to a central switch. Easy to manage; switch failure downs whole network.' },
+  { term: 'Switch', def: 'Network device that connects devices within a LAN, sending data only to the intended device using MAC addresses.' },
+  { term: 'Symmetric encryption', def: 'Encryption using the same key to encrypt and decrypt. Fast but key must be shared securely. Example: AES.' },
+  { term: 'TCP', def: 'Transmission Control Protocol — reliable transport protocol that confirms delivery and resends lost packets.' },
+  { term: 'TCP/IP', def: 'The protocol suite used for internet communication. Four layers: Application, Transport, Internet, Link.' },
+  { term: 'Topology', def: 'The physical or logical arrangement of how devices are connected in a network. Examples: star, bus, mesh.' },
+  { term: 'Trojan', def: 'Malware disguised as legitimate software. Does not self-replicate. Often creates backdoors for attackers.' },
+  { term: 'Two-Factor Authentication', def: '2FA — requires two forms of verification (e.g. password + phone code) to access an account.' },
+  { term: 'UDP', def: 'User Datagram Protocol — fast but unreliable transport protocol with no delivery confirmation. Used for streaming/gaming.' },
+  { term: 'Utility software', def: 'System software performing maintenance tasks — e.g. defragmentation, compression, antivirus, backup.' },
+  { term: 'Virtual memory', def: 'A section of the HDD/SSD used as RAM overflow when physical RAM is full. Much slower than real RAM.' },
+  { term: 'Virus', def: 'Malware that attaches to program files and spreads when shared. Can corrupt or delete data.' },
+  { term: 'Von Neumann', def: 'Architecture where program instructions and data share the same memory bus. Used in most general-purpose computers.' },
+  { term: 'WAP', def: 'Wireless Access Point — allows wireless devices to connect to a wired network via Wi-Fi.' },
+  { term: 'WAN', def: 'Wide Area Network — spans a large geographical area using third-party infrastructure. The internet is the largest WAN.' },
+  { term: 'Worm', def: 'Self-replicating malware that spreads across networks without needing a host file.' }
+].sort((a, b) => a.term.localeCompare(b.term));
+
+/* ============================================================
+   STATE & PROGRESS TRACKING
+   ============================================================ */
+let STATE = {
+  currentTopic: null,
+  currentTab: 'notes',
+  fc: { index: 0, known: [], learning: [], cards: [], isFlipped: false },
+  quiz: { index: 0, score: 0, answered: false, questions: [], done: false },
+  mock: { questions: [], index: 0, score: 0, active: false },
+  theme: 'dark',
+  sessionStart: Date.now(),
+  streak: parseInt(localStorage.getItem('cybercs_streak') || '1'),
+  lastVisit: localStorage.getItem('cybercs_lastvisit') || '',
+  progress: JSON.parse(localStorage.getItem('cybercs_progress') || '{}'),
+  achievements: JSON.parse(localStorage.getItem('cybercs_achievements') || '{}'),
+  quizzesDone: parseInt(localStorage.getItem('cybercs_quizzes') || '0'),
+  knownTotal: parseInt(localStorage.getItem('cybercs_known') || '0'),
+  checklist: JSON.parse(localStorage.getItem('cybercs_checklist') || '{}'),
+  mockDone: parseInt(localStorage.getItem('cybercs_mockdone') || '0')
+};
+
+const ACHIEVEMENTS_DEF = [
+  { id: 'first_quiz', icon: '🏆', name: 'First Quiz', desc: 'Complete your first quiz' },
+  { id: 'flashcard_master', icon: '⚡', name: 'Flashcard Master', desc: 'Mark 20 cards as known' },
+  { id: 'topic_complete', icon: '🌟', name: '100% Completion', desc: 'Complete all items in one topic' },
+  { id: 'mock_done', icon: '📝', name: 'Mock Exam', desc: 'Complete a full mock exam' },
+  { id: 'streak_3', icon: '🔥', name: 'On Fire!', desc: 'Maintain a 3-day streak' },
+  { id: 'all_topics', icon: '🎯', name: 'Scholar', desc: 'Visit all 5 topics' },
+  { id: 'perfect_quiz', icon: '💯', name: 'Perfect Score', desc: 'Score 100% on a quiz' }
+];
+
+function saveState() {
+  localStorage.setItem('cybercs_progress', JSON.stringify(STATE.progress));
+  localStorage.setItem('cybercs_achievements', JSON.stringify(STATE.achievements));
+  localStorage.setItem('cybercs_quizzes', STATE.quizzesDone);
+  localStorage.setItem('cybercs_known', STATE.knownTotal);
+  localStorage.setItem('cybercs_checklist', JSON.stringify(STATE.checklist));
+  localStorage.setItem('cybercs_mockdone', STATE.mockDone);
+}
+
+function unlockAchievement(id) {
+  if (!STATE.achievements[id]) {
+    STATE.achievements[id] = true;
+    saveState();
+    const ach = ACHIEVEMENTS_DEF.find(a => a.id === id);
+    if (ach) showToast(`🏆 Achievement Unlocked: ${ach.name}!`);
+    renderAchievements();
+  }
+}
+
+function checkAchievements() {
+  if (STATE.quizzesDone >= 1) unlockAchievement('first_quiz');
+  if (STATE.knownTotal >= 20) unlockAchievement('flashcard_master');
+  if (STATE.streak >= 3) unlockAchievement('streak_3');
+  if (STATE.mockDone >= 1) unlockAchievement('mock_done');
+  const visited = Object.keys(STATE.progress).length;
+  if (visited >= 5) unlockAchievement('all_topics');
+  TOPICS.forEach(t => {
+    const p = getTopicProgress(t.id);
+    if (p >= 100) unlockAchievement('topic_complete');
+  });
+}
+
+function getTopicProgress(id) {
+  const p = STATE.progress[id] || {};
+  let score = 0;
+  let total = 0;
+  const topic = TOPICS.find(t => t.id === id);
+  if (!topic) return 0;
+  const fcKnown = (p.fcKnown || 0);
+  score += Math.min(fcKnown, topic.flashcards.length);
+  total += topic.flashcards.length;
+  const qScore = p.quizBest || 0;
+  score += Math.round((qScore / 100) * topic.quiz.length);
+  total += topic.quiz.length;
+  return total > 0 ? Math.round((score / total) * 100) : 0;
+}
+
+function getOverallProgress() {
+  const pcts = TOPICS.map(t => getTopicProgress(t.id));
+  return Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length);
+}
+
+/* ============================================================
+   VIEW NAVIGATION
+   ============================================================ */
+function showView(name, topicId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  const view = document.getElementById('view-' + name);
+  if (view) view.classList.add('active');
+
+  if (name === 'home') {
+    document.getElementById('nav-home').classList.add('active');
+    renderDashboard();
+  } else if (name === 'topic' && topicId) {
+    loadTopic(topicId);
+  } else if (name === 'glossary') {
+    document.getElementById('nav-glossary').classList.add('active');
+    renderGlossary();
+  } else if (name === 'mock') {
+    document.getElementById('nav-mock').classList.add('active');
+    renderMockHome();
+  } else if (name === 'achievements') {
+    document.getElementById('nav-ach').classList.add('active');
+    renderAchievementsFull();
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  closeMobileNav();
+}
+
+/* ============================================================
+   DASHBOARD RENDERING
+   ============================================================ */
+function renderDashboard() {
+  // Topic cards
+  const grid = document.getElementById('topic-grid');
+  grid.innerHTML = TOPICS.map(t => {
+    const pct = getTopicProgress(t.id);
+    return `<div class="topic-card fade-in" onclick="showView('topic','${t.id}')" role="button" tabindex="0">
+      <span class="topic-icon">${t.icon}</span>
+      <div class="topic-name">${t.name}</div>
+      <div class="topic-desc">${t.desc}</div>
+      <div class="topic-progress-wrap">
+        <div class="topic-progress-bar" style="width:${pct}%"></div>
+      </div>
+      <div class="topic-progress-label">${pct}% complete</div>
+    </div>`;
+  }).join('');
+
+  // Overall bar
+  const overall = getOverallProgress();
+  document.getElementById('overall-pct').textContent = overall + '%';
+  document.getElementById('overall-bar').style.width = overall + '%';
+
+  // Stats
+  document.getElementById('stat-known').textContent = STATE.knownTotal;
+  document.getElementById('stat-quizzes').textContent = STATE.quizzesDone;
+
+  // Checklist
+  const cl = document.getElementById('topic-checklist');
+  cl.innerHTML = TOPICS.map(t => {
+    const done = STATE.checklist[t.id] || false;
+    return `<li class="${done ? 'done' : ''}" onclick="toggleChecklist('${t.id}', this)">
+      <div class="checklist-check">${done ? '✓' : ''}</div>
+      <span>${t.icon} ${t.name}</span>
+    </li>`;
+  }).join('');
+
+  // Achievements strip
+  renderAchievements();
+  checkAchievements();
+
+  // Streak
+  updateStreak();
+}
+
+function toggleChecklist(topicId, el) {
+  STATE.checklist[topicId] = !STATE.checklist[topicId];
+  saveState();
+  el.classList.toggle('done');
+  const check = el.querySelector('.checklist-check');
+  check.textContent = STATE.checklist[topicId] ? '✓' : '';
+}
+
+function renderAchievements() {
+  const container = document.getElementById('dashboard-badges');
+  if (!container) return;
+  container.innerHTML = ACHIEVEMENTS_DEF.map(a => `
+    <div class="badge-item ${STATE.achievements[a.id] ? 'unlocked' : ''}" title="${a.desc}">
+      <span class="badge-icon">${a.icon}</span>
+      <div>
+        <div class="badge-name">${a.name}</div>
+        <div class="badge-desc">${a.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderAchievementsFull() {
+  const container = document.getElementById('ach-full-list');
+  container.innerHTML = ACHIEVEMENTS_DEF.map(a => `
+    <div class="badge-item ${STATE.achievements[a.id] ? 'unlocked' : ''}" style="min-width:0;">
+      <span class="badge-icon" style="font-size:2rem;">${a.icon}</span>
+      <div>
+        <div class="badge-name" style="font-size:1rem;">${a.name}</div>
+        <div class="badge-desc" style="font-size:0.85rem;">${a.desc}</div>
+        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent1);margin-top:4px;">${STATE.achievements[a.id] ? 'UNLOCKED ✓' : 'LOCKED'}</div>
+      </div>
+    </div>`).join('');
+}
+
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (STATE.lastVisit !== today) {
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (STATE.lastVisit === yesterday) {
+      STATE.streak++;
+    } else if (STATE.lastVisit !== '') {
+      STATE.streak = 1;
+    }
+    STATE.lastVisit = today;
+    localStorage.setItem('cybercs_streak', STATE.streak);
+    localStorage.setItem('cybercs_lastvisit', today);
+  }
+  const el = document.getElementById('streak-display');
+  if (el) el.textContent = `🔥 REVISION STREAK: ${STATE.streak} DAY${STATE.streak !== 1 ? 'S' : ''}`;
+}
+
+/* ============================================================
+   TOPIC LOADING
+   ============================================================ */
+function loadTopic(topicId) {
+  const topic = TOPICS.find(t => t.id === topicId);
+  if (!topic) return;
+  STATE.currentTopic = topicId;
+
+  document.getElementById('topic-view-title').textContent = topic.icon + ' ' + topic.name;
+  document.getElementById('topic-view-desc').textContent = topic.desc;
+
+  // Track visited
+  if (!STATE.progress[topicId]) STATE.progress[topicId] = {};
+  saveState();
+
+  // Switch to notes tab
+  switchTab('notes');
+  renderNotes(topic);
+}
+
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+function switchTab(tab) {
+  STATE.currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+  document.getElementById('tab-' + tab + '-btn').classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  const topic = TOPICS.find(t => t.id === STATE.currentTopic);
+  if (!topic) return;
+
+  if (tab === 'flashcards') initFlashcards(topic);
+  if (tab === 'quiz') initQuiz(topic);
+  if (tab === 'exam') renderExam(topic);
+  if (tab === 'tools') renderTools(topic);
+}
+
+/* ============================================================
+   NOTES RENDERING
+   ============================================================ */
+function renderNotes(topic) {
+  const area = document.getElementById('notes-content-area');
+  let html = '';
+
+  topic.notes.forEach(n => {
+    html += `<div class="notes-section fade-in">
+      <div class="notes-section-title">${n.title}</div>
+      <div class="notes-content">${n.content}</div>
+    </div>`;
+  });
+
+  if (topic.expandable && topic.expandable.length) {
+    html += '<div class="notes-section fade-in"><div class="notes-section-title">EXPANDABLE DETAILS</div>';
+    topic.expandable.forEach((e, i) => {
+      html += `<div class="expand-card" id="exp-${i}">
+        <div class="expand-header" onclick="toggleExpand('exp-${i}')">
+          <span>${e.title}</span>
+          <span class="expand-arrow">▼</span>
+        </div>
+        <div class="expand-body">${e.content}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (topic.compareTable) {
+    const ct = topic.compareTable;
+    html += `<div class="notes-section fade-in">
+      <div class="notes-section-title">COMPARISON TABLE</div>
+      <div style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead><tr>${ct.headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${ct.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table></div>
+    </div>`;
+  }
+
+  area.innerHTML = html;
+}
+
+function toggleExpand(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+/* ============================================================
+   FLASHCARD ENGINE
+   ============================================================ */
+function initFlashcards(topic) {
+  const fc = STATE.fc;
+  fc.cards = [...topic.flashcards];
+  fc.index = 0;
+  fc.known = [];
+  fc.learning = [];
+  fc.isFlipped = false;
+
+  // Restore from progress
+  const p = STATE.progress[topic.id] || {};
+  if (p.fcKnown) fc.known = p.fcKnown;
+
+  updateFlashcardUI();
+}
+
+function updateFlashcardUI() {
+  const fc = STATE.fc;
+  const card = fc.cards[fc.index];
+  if (!card) return;
+
+  // Reset flip
+  fc.isFlipped = false;
+  document.getElementById('fc-card-inner').classList.remove('flipped');
+
+  document.getElementById('fc-question-text').textContent = card.q;
+  document.getElementById('fc-answer-text').textContent = card.a;
+  document.getElementById('fc-current').textContent = fc.index + 1;
+  document.getElementById('fc-total').textContent = fc.cards.length;
+  document.getElementById('fc-card-num').textContent = `${fc.index + 1}/${fc.cards.length}`;
+  document.getElementById('fc-known-count').textContent = fc.known.length;
+  document.getElementById('fc-learning-count').textContent = fc.learning.length;
+  const pct = Math.round((fc.known.length / fc.cards.length) * 100);
+  document.getElementById('fc-pct').textContent = pct + '%';
+  document.getElementById('fc-progress-fill').style.width = pct + '%';
+}
+
+function flipCard() {
+  const fc = STATE.fc;
+  fc.isFlipped = !fc.isFlipped;
+  const inner = document.getElementById('fc-card-inner');
+  if (fc.isFlipped) inner.classList.add('flipped');
+  else inner.classList.remove('flipped');
+}
+
+function markCard(status) {
+  const fc = STATE.fc;
+  const currentCard = fc.cards[fc.index];
+  if (!currentCard) return;
+
+  const container = document.getElementById('fc-card-container');
+
+  // Remove previous marks
+  fc.known = fc.known.filter(q => q !== currentCard.q);
+  fc.learning = fc.learning.filter(q => q !== currentCard.q);
+
+  if (status === 'known') {
+    fc.known.push(currentCard.q);
+    container.style.boxShadow = '0 0 30px rgba(38,194,129,0.4)';
+    container.style.borderColor = 'var(--success)';
+  } else {
+    fc.learning.push(currentCard.q);
+    container.style.boxShadow = '0 0 30px rgba(229,57,53,0.4)';
+    container.style.borderColor = 'var(--danger)';
+  }
+
+  setTimeout(() => {
+    container.style.boxShadow = '';
+    container.style.borderColor = '';
+    nextCard();
+  }, 400);
+
+  // Save progress
+  const topicId = STATE.currentTopic;
+  if (!STATE.progress[topicId]) STATE.progress[topicId] = {};
+  STATE.progress[topicId].fcKnown = fc.known;
+  STATE.knownTotal = Math.max(STATE.knownTotal, fc.known.length);
+  localStorage.setItem('cybercs_known', STATE.knownTotal);
+  saveState();
+  checkAchievements();
+}
+
+function nextCard() {
+  const fc = STATE.fc;
+  if (fc.index < fc.cards.length - 1) {
+    fc.index++;
+    updateFlashcardUI();
+  } else {
+    fc.index = 0;
+    updateFlashcardUI();
+    showToast('🔁 Deck complete! Starting from the beginning.');
+  }
+}
+
+/* ============================================================
+   QUIZ ENGINE
+   ============================================================ */
+function initQuiz(topic) {
+  STATE.quiz = {
+    index: 0, score: 0, answered: false,
+    questions: shuffle([...topic.quiz]),
+    done: false
+  };
+  renderQuizQuestion();
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderQuizQuestion() {
+  const qz = STATE.quiz;
+  const area = document.getElementById('quiz-main');
+
+  if (qz.done) {
+    renderQuizSummary();
+    return;
+  }
+
+  const q = qz.questions[qz.index];
+  if (!q) { renderQuizSummary(); return; }
+  const pct = Math.round((qz.index / qz.questions.length) * 100);
+
+  area.innerHTML = `
+    <div class="quiz-header">
+      <span>QUESTION ${qz.index + 1} / ${qz.questions.length}</span>
+      <span class="quiz-score-display">Score: ${qz.score}</span>
+    </div>
+    <div class="quiz-progress-bar-track">
+      <div class="quiz-progress-bar-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="quiz-question-card fade-in">
+      <div class="quiz-q-num">Q${qz.index + 1} of ${qz.questions.length}</div>
+      <div class="quiz-question-text">${q.q}</div>
+    </div>
+    <div class="quiz-answers">
+      ${q.opts.map((opt, i) => `
+        <button class="quiz-answer-btn" id="qa-${i}" onclick="selectAnswer(${i})">${opt}</button>
+      `).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <button class="quiz-next-btn" id="quiz-next-btn" onclick="nextQuestion()">Next Question &rarr;</button>
+  `;
+}
+
+function selectAnswer(idx) {
+  const qz = STATE.quiz;
+  if (qz.answered) return;
+  qz.answered = true;
+
+  const q = qz.questions[qz.index];
+  const correct = q.ans;
+  const isCorrect = idx === correct;
+
+  // Flash screen
+  flashScreen(isCorrect ? 'green' : 'red');
+
+  // Highlight buttons
+  document.querySelectorAll('.quiz-answer-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    if (i === idx && !isCorrect) btn.classList.add('incorrect');
+  });
+
+  const feedback = document.getElementById('quiz-feedback');
+  if (isCorrect) {
+    qz.score++;
+    feedback.textContent = '✓ Correct!';
+    feedback.style.color = 'var(--success)';
+  } else {
+    feedback.textContent = `✗ Incorrect. Correct answer: "${q.opts[correct]}"`;
+    feedback.style.color = 'var(--danger)';
+  }
+
+  const nextBtn = document.getElementById('quiz-next-btn');
+  if (nextBtn) nextBtn.classList.add('visible');
+}
+
+function nextQuestion() {
+  const qz = STATE.quiz;
+  qz.index++;
+  qz.answered = false;
+
+  if (qz.index >= qz.questions.length) {
+    qz.done = true;
+    STATE.quizzesDone++;
+    localStorage.setItem('cybercs_quizzes', STATE.quizzesDone);
+
+    // Save best score
+    const topicId = STATE.currentTopic;
+    if (!STATE.progress[topicId]) STATE.progress[topicId] = {};
+    const pct = Math.round((qz.score / qz.questions.length) * 100);
+    if (!STATE.progress[topicId].quizBest || pct > STATE.progress[topicId].quizBest) {
+      STATE.progress[topicId].quizBest = pct;
+    }
+    saveState();
+    checkAchievements();
+    if (pct === 100) unlockAchievement('perfect_quiz');
+  }
+
+  renderQuizQuestion();
+}
+
+function renderQuizSummary() {
+  const qz = STATE.quiz;
+  const pct = Math.round((qz.score / qz.questions.length) * 100);
+  let grade = pct >= 90 ? 'Distinction' : pct >= 70 ? 'Merit' : pct >= 50 ? 'Pass' : 'Keep Practising';
+
+  const area = document.getElementById('quiz-main');
+  area.innerHTML = `
+    <div class="quiz-summary fade-in">
+      <div class="quiz-summary-title">QUIZ COMPLETE</div>
+      <div class="quiz-summary-score">${pct}%</div>
+      <div class="quiz-summary-grade">${qz.score} / ${qz.questions.length} correct &mdash; ${grade}</div>
+      <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;margin:16px 0;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent1),var(--accent3));border-radius:4px;transition:width 1s ease;"></div>
+      </div>
+      <p style="color:var(--text2);font-size:0.87rem;margin-bottom:24px;">${pct >= 80 ? '🎉 Excellent work! You really know this topic.' : pct >= 60 ? '👍 Good effort — review the questions you got wrong.' : '📚 Keep revising — try the flashcards and notes first.'}</p>
+      <button class="quiz-retry-btn" onclick="initQuiz(TOPICS.find(t=>t.id===STATE.currentTopic))">🔄 Retry Quiz</button>
+    </div>
+  `;
+}
+
+function flashScreen(type) {
+  const el = document.getElementById('screen-flash');
+  el.className = 'screen-flash ' + type + ' show';
+  setTimeout(() => el.classList.remove('show'), 600);
+}
+
+/* ============================================================
+   EXAM PRACTICE RENDERING
+   ============================================================ */
+function renderExam(topic) {
+  const area = document.getElementById('exam-area');
+  area.innerHTML = topic.exam.map((q, i) => `
+    <div class="exam-question fade-in">
+      <div class="exam-q-header">
+        <span class="exam-q-num">QUESTION ${i + 1}</span>
+        <span class="exam-marks">[${q.marks} marks]</span>
+      </div>
+      <div class="exam-q-text">${q.q}</div>
+      <button class="exam-reveal-btn" onclick="revealAnswer(${i})">&#128065; Reveal Model Answer</button>
+      <div class="exam-model-answer" id="exam-ans-${i}">
+        <strong style="color:var(--success);font-family:var(--font-mono);font-size:0.72rem;letter-spacing:2px;">MODEL ANSWER</strong>
+        <div style="margin-top:8px;">${q.answer}</div>
+      </div>
+      <div class="exam-tip" id="exam-tip-${i}">
+        <div class="exam-tip-label">💡 EXAMINER TIP</div>
+        ${q.tip}
+      </div>
+    </div>
+  `).join('');
+}
+
+function revealAnswer(i) {
+  document.getElementById('exam-ans-' + i).classList.add('visible');
+  document.getElementById('exam-tip-' + i).classList.add('visible');
+}
+
+/* ============================================================
+   TOOLS / REVISION TOOLS
+   ============================================================ */
+function renderTools(topic) {
+  const out = document.getElementById('tools-output');
+  out.innerHTML = `
+    <div class="notes-section fade-in">
+      <div class="notes-section-title">TOPIC CHECKLIST</div>
+      <ul class="checklist">
+        ${topic.notes.map((n, i) => {
+          const key = `${topic.id}_note_${i}`;
+          const done = STATE.checklist[key];
+          return `<li class="${done?'done':''}" onclick="toggleChecklist('${key}', this)">
+            <div class="checklist-check">${done?'✓':''}</div>
+            <span>${n.title}</span>
+          </li>`;
+        }).join('')}
+      </ul>
+    </div>
+  `;
+}
+
+function randomFlashcard() {
+  const topic = TOPICS.find(t => t.id === STATE.currentTopic);
+  if (!topic) return;
+  const card = topic.flashcards[Math.floor(Math.random() * topic.flashcards.length)];
+  const out = document.getElementById('tools-output');
+  out.innerHTML = `
+    <div class="challenge-card fade-in">
+      <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:3px;color:var(--accent3);margin-bottom:12px;">RANDOM FLASHCARD</div>
+      <div class="challenge-word" style="font-size:1.2rem;">${card.q}</div>
+      <button class="random-tool-btn" style="margin:0 auto;" onclick="this.nextElementSibling.style.display='block';this.style.display='none'">Reveal Answer</button>
+      <div class="challenge-hint" style="display:none;color:var(--text);font-size:0.95rem;margin-top:12px;">${card.a}</div>
+    </div>
+  `;
+}
+
+function randomQuestion() {
+  const topic = TOPICS.find(t => t.id === STATE.currentTopic);
+  if (!topic) return;
+  const q = topic.quiz[Math.floor(Math.random() * topic.quiz.length)];
+  const out = document.getElementById('tools-output');
+  out.innerHTML = `
+    <div class="challenge-card fade-in">
+      <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:3px;color:var(--accent3);margin-bottom:12px;">RANDOM QUESTION</div>
+      <div class="challenge-word" style="font-size:1.1rem;">${q.q}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0;">
+        ${q.opts.map((o, i) => `<div style="background:var(--bg2);border:1px solid var(--panel-border);border-radius:10px;padding:10px;font-size:0.85rem;cursor:pointer;" onclick="revealRandQ(this,${i},${q.ans})">${o}</div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function revealRandQ(el, chosen, correct) {
+  const opts = el.parentElement.children;
+  for (let i = 0; i < opts.length; i++) {
+    opts[i].style.pointerEvents = 'none';
+    if (i === correct) opts[i].style.background = 'rgba(38,194,129,0.2)';
+    if (i === chosen && chosen !== correct) opts[i].style.background = 'rgba(229,57,53,0.2)';
+  }
+}
+
+function startChallenge() {
+  const topic = TOPICS.find(t => t.id === STATE.currentTopic);
+  if (!topic) return;
+  const entry = GLOSSARY[Math.floor(Math.random() * GLOSSARY.length)];
+  const out = document.getElementById('tools-output');
+  out.innerHTML = `
+    <div class="challenge-card fade-in">
+      <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:3px;color:var(--accent3);margin-bottom:12px;">CHALLENGE MODE — Define this term:</div>
+      <div class="challenge-word">${entry.term}</div>
+      <div class="challenge-hint">Type your definition below, then check the answer.</div>
+      <textarea class="challenge-input" rows="3" placeholder="Type your definition here..." style="width:100%;resize:vertical;min-height:80px;"></textarea>
+      <br>
+      <button class="random-tool-btn" onclick="this.nextElementSibling.style.display='block';this.style.display='none'">Check Answer</button>
+      <div style="display:none;background:rgba(0,200,100,0.08);border:1px solid rgba(38,194,129,0.3);border-radius:10px;padding:14px;margin-top:12px;font-size:0.87rem;">${entry.def}</div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   GLOSSARY ENGINE
+   ============================================================ */
+function renderGlossary(filter = '', alpha = '') {
+  buildAlphaFilter(alpha);
+
+  let entries = GLOSSARY;
+  if (filter) {
+    const q = filter.toLowerCase();
+    entries = entries.filter(e => e.term.toLowerCase().includes(q) || e.def.toLowerCase().includes(q));
+  }
+  if (alpha) {
+    entries = entries.filter(e => e.term.toUpperCase().startsWith(alpha));
+  }
+
+  const list = document.getElementById('glossary-list');
+  if (entries.length === 0) {
+    list.innerHTML = `<div style="text-align:center;color:var(--text2);padding:32px;font-family:var(--font-mono);">No terms found</div>`;
+    return;
+  }
+
+  list.innerHTML = entries.map((e, i) => `
+    <div class="glossary-entry" id="gentry-${i}">
+      <div class="glossary-term-header" onclick="toggleGlossary('gentry-${i}')">
+        <span class="glossary-term">${e.term}</span>
+        <span class="expand-arrow" style="color:var(--accent1);font-size:0.75rem;">▼</span>
+      </div>
+      <div class="glossary-def-body">${e.def}</div>
+    </div>
+  `).join('');
+}
+
+function buildAlphaFilter(active) {
+  const container = document.getElementById('alpha-filter');
+  const letters = [...new Set(GLOSSARY.map(e => e.term[0].toUpperCase()))].sort();
+  container.innerHTML = `<button class="alpha-btn ${!active?'active':''}" onclick="renderGlossary('','')">ALL</button>` +
+    letters.map(l => `<button class="alpha-btn ${active===l?'active':''}" onclick="renderGlossary('','${l}')">${l}</button>`).join('');
+}
+
+function toggleGlossary(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function filterGlossary(val) {
+  renderGlossary(val, '');
+}
+
+/* ============================================================
+   MOCK EXAM ENGINE
+   ============================================================ */
+function renderMockHome() {
+  const content = document.getElementById('mock-content');
+  content.innerHTML = `
+    <div class="mock-config fade-in">
+      <h2>MOCK EXAM GENERATOR</h2>
+      <p>A randomly generated GCSE-style paper drawn from all 5 topics. 20 questions total — timed, marked, with full mark scheme.</p>
+      <button class="mock-start-btn" onclick="startMockExam()">START MOCK EXAM</button>
+    </div>
+    ${STATE.mockDone > 0 ? `<div style="text-align:center;color:var(--text2);font-family:var(--font-mono);font-size:0.8rem;">Completed ${STATE.mockDone} mock exam${STATE.mockDone!==1?'s':''}</div>` : ''}
+  `;
+}
+
+function startMockExam() {
+  // Pick 20 random questions from all topics (4 per topic)
+  const allQ = [];
+  TOPICS.forEach(t => {
+    const shuffled = shuffle(t.quiz);
+    allQ.push(...shuffled.slice(0, 4).map(q => ({ ...q, topic: t.name })));
+  });
+  const mockQ = shuffle(allQ).slice(0, 20);
+
+  STATE.mock = { questions: mockQ, index: 0, score: 0, active: true, answers: [] };
+  renderMockQuestion();
+}
+
+function renderMockQuestion() {
+  const m = STATE.mock;
+  const content = document.getElementById('mock-content');
+
+  if (!m.active || m.index >= m.questions.length) {
+    renderMockSummary();
+    return;
+  }
+
+  const q = m.questions[m.index];
+  const pct = Math.round((m.index / m.questions.length) * 100);
+
+  content.innerHTML = `
+    <div class="mock-progress">QUESTION ${m.index + 1} / ${m.questions.length} &nbsp;|&nbsp; Score: ${m.score} &nbsp;|&nbsp; ${q.topic}</div>
+    <div style="height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-bottom:24px;">
+      <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent1),var(--accent3));border-radius:3px;"></div>
+    </div>
+    <div class="quiz-question-card fade-in">
+      <div class="quiz-q-num">MOCK EXAM — ${q.topic}</div>
+      <div class="quiz-question-text">${q.q}</div>
+    </div>
+    <div class="quiz-answers">
+      ${q.opts.map((opt, i) => `<button class="quiz-answer-btn" id="mqa-${i}" onclick="selectMockAnswer(${i})">${opt}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="mock-feedback"></div>
+    <button class="quiz-next-btn" id="mock-next-btn" onclick="nextMockQuestion()">Next &rarr;</button>
+  `;
+}
+
+function selectMockAnswer(idx) {
+  const m = STATE.mock;
+  const q = m.questions[m.index];
+  if (m.answered) return;
+  m.answered = true;
+
+  const isCorrect = idx === q.ans;
+  if (isCorrect) m.score++;
+  m.answers.push({ q: q.q, chosen: idx, correct: q.ans, opts: q.opts });
+
+  flashScreen(isCorrect ? 'green' : 'red');
+
+  document.querySelectorAll('.quiz-answer-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    if (i === idx && !isCorrect) btn.classList.add('incorrect');
+  });
+
+  const fb = document.getElementById('mock-feedback');
+  if (fb) {
+    fb.textContent = isCorrect ? '✓ Correct!' : `✗ Correct: "${q.opts[q.ans]}"`;
+    fb.style.color = isCorrect ? 'var(--success)' : 'var(--danger)';
+  }
+
+  const nb = document.getElementById('mock-next-btn');
+  if (nb) nb.classList.add('visible');
+}
+
+function nextMockQuestion() {
+  STATE.mock.index++;
+  STATE.mock.answered = false;
+  renderMockQuestion();
+}
+
+function renderMockSummary() {
+  const m = STATE.mock;
+  const pct = Math.round((m.score / m.questions.length) * 100);
+  STATE.mockDone++;
+  STATE.mock.active = false;
+  localStorage.setItem('cybercs_mockdone', STATE.mockDone);
+  unlockAchievement('mock_done');
+  saveState();
+
+  const content = document.getElementById('mock-content');
+  content.innerHTML = `
+    <div class="quiz-summary fade-in">
+      <div class="quiz-summary-title">MOCK EXAM COMPLETE</div>
+      <div class="quiz-summary-score">${pct}%</div>
+      <div class="quiz-summary-grade">${m.score} / ${m.questions.length} correct</div>
+      <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;margin:16px 0;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent1),var(--accent3));border-radius:4px;"></div>
+      </div>
+      <div class="notes-section" style="text-align:left;margin-top:20px;">
+        <div class="notes-section-title">MARK SCHEME</div>
+        ${m.answers.map((a, i) => `
+          <div style="padding:10px 0;border-bottom:1px solid var(--panel-border);">
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">${i+1}. ${a.q}</div>
+            <div style="font-size:0.82rem;color:${a.chosen===a.correct?'var(--success)':'var(--danger)'};">
+              Your answer: ${a.opts[a.chosen]} ${a.chosen===a.correct?'✓':'✗'}
+            </div>
+            ${a.chosen!==a.correct?`<div style="font-size:0.82rem;color:var(--success);">Correct: ${a.opts[a.correct]}</div>`:''}
+          </div>
+        `).join('')}
+      </div>
+      <button class="quiz-retry-btn" style="margin-top:20px;" onclick="renderMockHome()">New Mock Exam</button>
+    </div>
+  `;
+}
+
+/* ============================================================
+   SEARCH ENGINE
+   ============================================================ */
+function handleNavSearch(val) {
+  if (val.length < 2) {
+    if (val.length === 0) showView('home');
+    return;
+  }
+  showView('search');
+  const q = val.toLowerCase();
+  const results = [];
+
+  TOPICS.forEach(t => {
+    t.flashcards.forEach(fc => {
+      if (fc.q.toLowerCase().includes(q) || fc.a.toLowerCase().includes(q)) {
+        results.push({ term: fc.q, context: fc.a.substring(0, 80) + '...', topic: t.name, topicId: t.id, type: 'flashcard' });
+      }
+    });
+    if (t.name.toLowerCase().includes(q)) {
+      results.push({ term: t.name, context: t.desc, topic: t.name, topicId: t.id, type: 'topic' });
+    }
+  });
+
+  GLOSSARY.forEach(e => {
+    if (e.term.toLowerCase().includes(q) || e.def.toLowerCase().includes(q)) {
+      results.push({ term: e.term, context: e.def.substring(0, 80) + '...', topic: 'Glossary', topicId: null, type: 'glossary' });
+    }
+  });
+
+  const area = document.getElementById('search-results-area');
+  if (results.length === 0) {
+    area.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--font-mono);">No results found for "${val}"</div>`;
+    return;
+  }
+
+  area.innerHTML = `<div style="color:var(--text2);font-family:var(--font-mono);font-size:0.8rem;margin-bottom:16px;">${results.length} result${results.length!==1?'s':''} for "${val}"</div>
+    <div class="search-results-list">${results.map(r => `
+      <div class="search-result-item" onclick="${r.type==='glossary'?`showView('glossary')`:`showView('topic','${r.topicId}')`}">
+        <div class="search-result-term">${r.term}</div>
+        <div class="search-result-context">${r.context}</div>
+        <div class="search-result-topic">${r.topic} · ${r.type.toUpperCase()}</div>
+      </div>
+    `).join('')}</div>`;
+}
+
+/* ============================================================
+   THEME CONTROLLER
+   ============================================================ */
+function toggleTheme() {
+  STATE.theme = STATE.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', STATE.theme);
+  document.getElementById('theme-toggle').textContent = STATE.theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('cybercs_theme', STATE.theme);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('cybercs_theme') || 'dark';
+  STATE.theme = saved;
+  document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+}
+
+/* ============================================================
+   MOBILE NAV
+   ============================================================ */
+function toggleMobileNav() {
+  document.getElementById('nav-links').classList.toggle('open');
+}
+
+function closeMobileNav() {
+  document.getElementById('nav-links').classList.remove('open');
+}
+
+/* ============================================================
+   TOAST NOTIFICATION
+   ============================================================ */
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ============================================================
+   DIGITAL CLOCK & SESSION TIMER
+   ============================================================ */
+function updateClock() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  const clockEl = document.getElementById('digital-clock');
+  if (clockEl) clockEl.textContent = `${hh}:${mm}:${ss}`;
+
+  const elapsed = Math.floor((Date.now() - STATE.sessionStart) / 1000);
+  const eh = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+  const em = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+  const es = String(elapsed % 60).padStart(2, '0');
+  const sessionEl = document.getElementById('session-timer-display');
+  if (sessionEl) sessionEl.textContent = `SESSION: ${eh}:${em}:${es}`;
+}
+
+/* ============================================================
+   CYBER GRID CANVAS ANIMATION
+   ============================================================ */
+function initGrid() {
+  const canvas = document.getElementById('grid-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function isDark() {
+    return document.documentElement.getAttribute('data-theme') === 'dark';
+  }
+
+  function createParticles() {
+    particles = [];
+    const count = Math.min(60, Math.floor((W * H) / 18000));
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2 + 1
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const dark = isDark();
+    const lineColor = dark ? 'rgba(255,23,68,' : 'rgba(0,200,255,';
+    const dotColor = dark ? 'rgba(255,100,100,' : 'rgba(0,150,255,';
+
+    // Grid
+    ctx.strokeStyle = dark ? 'rgba(220,0,50,0.04)' : 'rgba(0,150,255,0.04)';
+    ctx.lineWidth = 1;
+    const step = 60;
+    for (let x = 0; x < W; x += step) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += step) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // Particles
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = dotColor + '0.6)';
+      ctx.fill();
+    });
+
+    // Connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = lineColor + (1 - dist / 150) * 0.3 + ')';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  createParticles();
+  draw();
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+}
+
+/* ============================================================
+   KEYBOARD CONTROLS
+   ============================================================ */
+document.addEventListener('keydown', e => {
+  const activeView = document.querySelector('.view.active');
+  if (!activeView || activeView.id !== 'view-topic') return;
+  if (STATE.currentTab !== 'flashcards') return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+  if (e.code === 'ArrowRight') { markCard('known'); }
+  if (e.code === 'ArrowLeft') { markCard('learning'); }
+});
+
+/* ============================================================
+   LOADING SCREEN & INIT
+   ============================================================ */
+const statusMessages = [
+  'LOADING TOPIC DATA...',
+  'INITIALISING FLASHCARD ENGINE...',
+  'BUILDING QUIZ SYSTEM...',
+  'LOADING GLOSSARY...',
+  'SETTING UP ACHIEVEMENT SYSTEM...',
+  'SYSTEM READY'
+];
+
+let statusIdx = 0;
+const statusInterval = setInterval(() => {
+  const el = document.getElementById('loading-status');
+  if (el && statusIdx < statusMessages.length) {
+    el.textContent = statusMessages[statusIdx++];
+  }
+}, 350);
+
+window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  initGrid();
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  setTimeout(() => {
+    clearInterval(statusInterval);
+    document.getElementById('loading-screen').classList.add('hidden');
+    renderDashboard();
+    showToast('Welcome to CYBER//CS — OCR J277 Revision Portal');
+  }, 2400);
+});
+</script>
+</body>
+</html>
